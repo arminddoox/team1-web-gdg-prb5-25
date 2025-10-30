@@ -1,39 +1,49 @@
 {
   "name": "habit-routine-app",
-  "version": "0.0.0",
-  "description": "Full-stack application with NodeJS, ExpressJS and Vite/React",
+  "description": "A habit and routine tracking application",
+  "keywords": ["habit", "routine", "tracker"],
+  "author": "Arminddoox",
+  "license": "ISC",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:backend": "nodemon backend/server.js",
-    "dev:frontend": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "start": "node backend/server.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+
+    "dev": "vite --config frontend/vite.config.js",
+    "build": "vite build --config frontend/vite.config.js",
+    "preview": "vite preview --config frontend/vite.config.js",
+
+    "dev:backend": "nodemon backend/app.js",
+    "preview:backend": "node backend/app.js",
+
+    "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",
+    "preview:all": "concurrently \"npm run preview\" \"npm run preview:backend\""
   },
   "dependencies": {
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "express": "^4.18.2",
-    "dotenv": "^16.3.1",
-    
-    "cors": "^2.8.5"
+
+    "express": "^4.21.2",
+    "cookie-parser": "~1.4.4",
+    "morgan": "^1.10.1",
+    "debug": "~2.6.9",
+    "http-errors": "~1.6.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
+    "eslint": "^9.36.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.22",
+    
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.4",
-    "eslint": "^9.36.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "eslint-plugin-react-refresh": "^0.4.22",
-    "globals": "^16.4.0",
     "vite": "^7.1.7",
 
-    "concurrently": "^8.2.2",
-    "nodemon": "^3.0.2"
+    "nodemon": "^3.0.1",
+
+    "globals": "^16.4.0",
+    "concurrently": "^8.2.0"
   }
 }
