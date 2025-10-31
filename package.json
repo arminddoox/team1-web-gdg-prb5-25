@@ -16,17 +16,17 @@
     "dev": "vite --config frontend/vite.config.js",
     "build": "vite build --config frontend/vite.config.js",
     "preview": "vite preview --config frontend/vite.config.js",
-    "dev:backend": "nodemon backend/app.js",
+    "dev:backend": "nodemon --watch backend --ignore frontend backend/app.js",
     "preview:backend": "node backend/app.js",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",
     "preview:all": "concurrently \"npm run preview\" \"npm run preview:backend\""
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
-    "http-errors": "~1.6.3",
+    "http-errors": "^2.0.0",
     "mongodb": "^6.20.0",
     "morgan": "^1.10.1",
     "react": "^19.1.1",
@@ -42,7 +42,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
     "globals": "^16.4.0",
-    "nodemon": "^3.0.1",
+    "nodemon": "^3.1.10",
     "vite": "^7.1.7"
   }
 }

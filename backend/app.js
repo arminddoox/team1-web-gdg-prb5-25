@@ -1,93 +1,72 @@
 // backend/app.js
-import 'dotenv/config'; // NECESSARY – loads .env (PORT, etc.)
-
-import express from 'express';
-import { join } from 'path';
-import { fileURLToPath } from 'url';
-import { existsSync } from 'fs';
-
-import createError from 'http-errors';   // NECESSARY for 404/error handler
-import logger from 'morgan';               // OPTIONAL – dev logging only
-import cookieParser from 'cookie-parser';   // OPTIONAL – only if you use cookies
-
-// Import API routes
-import indexRouter from './routes/index.js';   // NECESSARY if you have /api
-import usersRouter from './routes/users.js';   // NECESSARY if you have /api/users
+import express from 'express'
+import dotenv from 'dotenv'
+import morgan from 'morgan'
+import cookieParser from 'cookie-parser'
+import createError from 'http-errors'
+import cors from 'cors'
 
 // ——————————————————————————————————————
-// 1. MIDDLEWARE
+// 1. LOAD ENVIRONMENT VARIABLES
 // ——————————————————————————————————————
-const app = express();
+dotenv.config() // ← CHANGED: Remove the path parameter
 
-// NECESSARY for JSON APIs
-app.use(express.json());
-
-// NECESSARY if you accept form POSTs (e.g. from frontend)
-app.use(express.urlencoded({ extended: false }));
-
-// OPTIONAL – only if you read/write cookies
-app.use(cookieParser());
-
-// OPTIONAL – great for dev, noisy in prod
-app.use(logger('dev'));
+const app = express()
+const PORT = process.env.PORT || 3000
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
 
 // ——————————————————————————————————————
-// 2. API ROUTES (prefixed with /api)
+// 2. MIDDLEWARE
 // ——————————————————————————————————————
-app.use('/api', indexRouter);       // NECESSARY
-app.use('/api/users', usersRouter); // NECESSARY
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(cookieParser())
+app.use(morgan('dev'))
 
-// ——————————————————————————————————————
-// 3. SERVE VITE PRODUCTION BUILD (frontend/dist)
-// ——————————————————————————————————————
-const __filename = fileURLToPath(import.meta.url);
-const __dirname  = join(__filename, '..');
-const distPath   = join(__dirname, '..', 'frontend', 'dist');
-
-// NECESSARY – fail fast if build is missing
-if (!existsSync(distPath)) {
-  console.error('ERROR: frontend/dist not found! Run: npm run build');
-  process.exit(1);
-}
-
-// NECESSARY – serve JS/CSS/images
-app.use(express.static(distPath));
-
-// NECESSARY – SPA fallback
-app.get('*', (req, res, next) => {
-  if (req.originalUrl.startsWith('/api')) return next();
-  const indexFile = join(distPath, 'index.html');
-  if (existsSync(indexFile)) {
-    res.sendFile(indexFile);
-  } else {
-    next(createError(500, 'index.html missing'));
-  }
-});
+// Enable CORS for frontend
+app.use(
+  cors({
+    origin: FRONTEND_URL,
+    credentials: true,
+  })
+)
 
 // ——————————————————————————————————————
-// 4. 404 & ERROR HANDLER
+// 3. ROUTES
 // ——————————————————————————————————————
-// NECESSARY – catch unknown routes
-app.use((req, res, next) => {
-  next(createError(404));
-});
+app.get('/api', (req, res) => {
+  res.json({ message: '✅ API is running', port: PORT }) // ← CHANGED: Removed apiUrl
+})
 
-// NECESSARY – JSON error response
-app.use((err, req, res) => {
-  const status = err.status || 500;
+// Example route
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    port: PORT,
+    mongo: process.env.MONGODB_URI ? 'configured' : 'not configured',
+  })
+})
+
+// ——————————————————————————————————————
+// 4. 404 + ERROR HANDLING
+// ——————————————————————————————————————
+app.use((req, res, next) => next(createError(404, 'Not Found')))
+
+app.use((err, req, res, next) => {
+  const status = err.status || 500
   res.status(status).json({
     message: err.message,
-    error: req.app.get('env') === 'development' ? err : {}
-  });
-});
+    error: req.app.get('env') === 'development' ? err : {},
+  })
+})
 
 // ——————————————————————————————————————
 // 5. START SERVER
 // ——————————————————————————————————————
-const PORT = process.env.PORT || 3000;
-
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+  console.log(`🚀 Backend running on http://localhost:${PORT}`)
+  console.log(`🌐 Frontend allowed from: ${FRONTEND_URL}`)
+  console.log(`📦 MongoDB URI: ${process.env.MONGODB_URI ? 'Loaded' : 'Missing'}`)
+})
 
-export default app;
+export default app
