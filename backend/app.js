@@ -1,72 +1,100 @@
-// backend/app.js
-import express from 'express'
-import dotenv from 'dotenv'
-import morgan from 'morgan'
-import cookieParser from 'cookie-parser'
-import createError from 'http-errors'
-import cors from 'cors'
+import express from 'express';
+import 'express-async-errors';
+import cors from 'cors';
+import helmet from 'helmet';
+import createError from 'http-errors';
+import configs from './configs.js';
 
-// ——————————————————————————————————————
-// 1. LOAD ENVIRONMENT VARIABLES
-// ——————————————————————————————————————
-dotenv.config() // ← CHANGED: Remove the path parameter
+// Routes would be imported here
+// import authRoutes from './routes/auth.js';
+// import habitRoutes from './routes/habits.js';
+// import routineRoutes from './routes/routines.js';
 
-const app = express()
-const PORT = process.env.PORT || 3000
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'
+const app = express();
 
-// ——————————————————————————————————————
-// 2. MIDDLEWARE
-// ——————————————————————————————————————
-app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
-app.use(cookieParser())
-app.use(morgan('dev'))
+// ============================================
+// Security Middleware (helmet)
+// ============================================
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
 
-// Enable CORS for frontend
-app.use(
-  cors({
-    origin: FRONTEND_URL,
-    credentials: true,
-  })
-)
+// ============================================
+// CORS Configuration
+// ============================================
+app.use(cors({
+  origin: configs.CORS_ORIGIN.split(',').map(origin => origin.trim()),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 
-// ——————————————————————————————————————
-// 3. ROUTES
-// ——————————————————————————————————————
-app.get('/api', (req, res) => {
-  res.json({ message: '✅ API is running', port: PORT }) // ← CHANGED: Removed apiUrl
-})
+// ============================================
+// Body Parsing Middleware
+// ============================================
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Example route
+// ============================================
+// Request Logging (Simple)
+// ============================================
+if (configs.NODE_ENV === 'development') {
+  app.use((req, res, next) => {
+    const start = Date.now();
+    res.on('finish', () => {
+      const duration = Date.now() - start;
+      console.log(`${req.method} ${req.path} ${res.statusCode} - ${duration}ms`);
+    });
+    next();
+  });
+}
+
+// ============================================
+// API Routes
+// ============================================
 app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    port: PORT,
-    mongo: process.env.MONGODB_URI ? 'configured' : 'not configured',
-  })
-})
+  res.status(200).json({
+    status: 'success',
+    message: 'Server is running',
+    timestamp: new Date().toISOString(),
+  });
+});
+// app.use('/api/auth', authRoutes);
+// app.use('/api/habits', habitRoutes);
+// app.use('/api/routines', routineRoutes);
 
-// ——————————————————————————————————————
-// 4. 404 + ERROR HANDLING
-// ——————————————————————————————————————
-app.use((req, res, next) => next(createError(404, 'Not Found')))
+// ============================================
+// 404 Handler
+// ============================================
+app.use((req, res, next) => {
+  next(createError(404, `Cannot ${req.method} ${req.path}`));
+});
 
+// ============================================
+// Error Handler Middleware
+// ============================================
 app.use((err, req, res, next) => {
-  const status = err.status || 500
-  res.status(status).json({
+  // Set default error status
+  err.statusCode = err.statusCode || err.status || 500;
+  err.message = err.message || 'Internal Server Error';
+  
+  // Log error
+  if (configs.NODE_ENV !== 'test') {
+    console.error('Error:', {
+      message: err.message,
+      statusCode: err.statusCode,
+      stack: configs.NODE_ENV === 'development' ? err.stack : undefined,
+    });
+  }
+  
+  // Send error response
+  res.status(err.statusCode).json({
+    status: 'error',
+    statusCode: err.statusCode,
     message: err.message,
-    error: req.app.get('env') === 'development' ? err : {},
-  })
-})
+    ...(configs.NODE_ENV === 'development' && { stack: err.stack }),
+  });
+});
 
-// ——————————————————————————————————————
-// 5. START SERVER
-// ——————————————————————————————————————
-app.listen(PORT, () => {
-  console.log(`🚀 Backend running on http://localhost:${PORT}`)
-  console.log(`🌐 Frontend allowed from: ${FRONTEND_URL}`)
-  console.log(`📦 MongoDB URI: ${process.env.MONGODB_URI ? 'Loaded' : 'Missing'}`)
-})
-
-export default app
+export default app;
