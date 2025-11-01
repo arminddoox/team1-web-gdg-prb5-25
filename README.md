@@ -29,9 +29,9 @@ BCRYPT_SALT_ROUNDS=10
 ```bash
 npm run dev           # Host local frontend
 npm run dev:backend   # Host local backend
-npm run dev:all		    # Host both frontend and backend locally
-npm run build		      # Frontend needs to run this command before pushing to Github
-npm run lint		      # Format code using ESLint
+npm run dev:all		  # Host both frontend and backend locally
+npm run build		  # Frontend needs to run this command before pushing to Github
+npm run lint          # Format code using ESLint
 ```
 
 ### Updating features to Github
