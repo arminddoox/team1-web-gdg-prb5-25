@@ -1,6 +1,6 @@
 ## Workflow Guideline
 
-### Clone project
+### 1. Clone project
 
 ```bash
 git clone team1-web-gdg-prb5-25.git
@@ -8,7 +8,7 @@ cd team1-web-gdg-prb5-25
 npm install
 ```
 
-### Create a .env file in the Project Root
+### 2. Create a .env file in the Project Root
 
 ```env
 # Frontend variables (VITE_ prefix needed)
@@ -25,7 +25,7 @@ CORS_ORIGIN=http://localhost:5173
 BCRYPT_SALT_ROUNDS=10
 ```
 
-### Scripts commands (listed in package.json)
+### 3. Scripts commands (listed in package.json)
 ```bash
 npm run dev           # Host local frontend
 npm run dev:backend   # Host local backend
@@ -34,7 +34,7 @@ npm run build		  # Frontend needs to run this command before pushing to Github
 npm run lint          # Format code using ESLint
 ```
 
-### Updating features to Github
+### 4. Updating features to Github
 A **new branch** needs to be created
 ```bash
 git checkout -b NewFeatureBranch
@@ -44,7 +44,7 @@ git push origin -u NewFeatureBranch
 ```
 Then open a **Pull Request** on Github.
 
-### If adding new packages
+### 5. If adding new packages
 If adding new packages by make any change on `package.json`, or by using the command:
 ```bash
 npm install <packages>
