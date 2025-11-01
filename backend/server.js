@@ -23,7 +23,7 @@ const connectDB = async () => {
     });
 
     mongoose.connection.on('disconnected', () => {
-      console.warn('⚠️ MongoDB disconnected');
+      console.warn('⚠️  MongoDB disconnected');
     });
 
     mongoose.connection.on('reconnected', () => {
@@ -47,7 +47,7 @@ const startServer = async () => {
     // Start listening
     const server = app.listen(configs.PORT, () => {
       console.log('');
-      console.log('============================================');
+      console.log('🚀 ============================================');
       console.log(`   Server running in ${configs.NODE_ENV} mode`);
       console.log(`   Port: ${configs.PORT}`);
       console.log(`   URL: http://localhost:${configs.PORT}`);
@@ -60,42 +60,54 @@ const startServer = async () => {
     // Graceful Shutdown
     // ============================================
     const gracefulShutdown = async (signal) => {
-      console.log(`\n${signal} received. Starting graceful shutdown...`);
+      console.log(`\n⚠️  ${signal} received. Shutting down gracefully...`);
 
+      // Close server first (stop accepting new connections)
       server.close(async () => {
         console.log('✅ HTTP server closed');
 
         try {
-          await mongoose.connection.close();
+          // Close database connection
+          await mongoose.connection.close(false);
           console.log('✅ MongoDB connection closed');
-          process.exit(0);
+          process.kill(process.pid, 'SIGTERM');
         } catch (error) {
           console.error('❌ Error during shutdown:', error);
-          process.exit(1);
+          process.kill(process.pid, 'SIGTERM');
         }
       });
 
-      // Force shutdown after 10 seconds
+      // Force shutdown after 5 seconds (reduced from 10)
       setTimeout(() => {
-        console.error('⚠️  Forced shutdown after timeout');
-        process.exit(1);
-      }, 10000);
+        console.error('⚠️  Could not close connections in time, forcefully shutting down');
+        process.kill(process.pid, 'SIGTERM');
+      }, 5000).unref();
     };
 
-    // Handle shutdown signals
-    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    // Handle shutdown signals (once only to prevent duplicate prompts)
+    process.once('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.once('SIGINT', () => gracefulShutdown('SIGINT'));
 
-    // Handle uncaught errors
-    process.on('uncaughtException', (error) => {
-      console.error('❌ Uncaught Exception:', error);
-      gracefulShutdown('UNCAUGHT_EXCEPTION');
+    // Handle nodemon restart signal
+    process.once('SIGUSR2', async () => {
+      console.log('\n🔄 Nodemon restart detected...');
+      await mongoose.connection.close(false);
+      console.log('✅ MongoDB connection closed');
+      process.kill(process.pid, 'SIGUSR2');
     });
 
-    process.on('unhandledRejection', (reason, promise) => {
-      console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-      gracefulShutdown('UNHANDLED_REJECTION');
-    });
+    // Handle uncaught errors (only in production)
+    if (configs.NODE_ENV === 'production') {
+      process.once('uncaughtException', (error) => {
+        console.error('❌ Uncaught Exception:', error);
+        gracefulShutdown('UNCAUGHT_EXCEPTION');
+      });
+
+      process.once('unhandledRejection', (reason, promise) => {
+        console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+        gracefulShutdown('UNHANDLED_REJECTION');
+      });
+    }
 
   } catch (error) {
     console.error('❌ Failed to start server:', error);

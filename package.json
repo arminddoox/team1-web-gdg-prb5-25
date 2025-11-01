@@ -18,8 +18,8 @@
     "preview": "vite preview --config frontend/vite.config.js",
     "dev:backend": "nodemon --watch backend --ignore frontend backend/server.js",
     "preview:backend": "node backend/server.js",
-    "dev:all": "concurrently \"npm run dev\" \"npm run dev:backend\"",
-    "preview:all": "concurrently \"npm run preview\" \"npm run preview:backend\""
+    "dev:all": "concurrently \"npm run dev:backend\" \"npm run dev\"",
+    "preview:all": "concurrently \"npm run preview:backend\" \"npm run preview\""
   },
   "dependencies": {
     "axios": "^1.13.1",
