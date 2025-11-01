@@ -45,10 +45,10 @@ git push origin -u NewFeatureBranch
 Then open a **Pull Request** on Github.
 
 ### If adding new packages
-If adding new packages by using the command 
+If adding new packages by make any change on `package.json`, or by using the command:
 ```bash
 npm install <packages>
 ```
-or by make any change on `package.json`.
 It is required to explain the reasons and purpose of new packages.
+
 *The coding environment depends on `package.json`; any issues with this file may cause deployment errors.*
