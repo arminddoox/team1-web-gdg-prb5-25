@@ -33,4 +33,4 @@ const trackingSchema = new mongoose.Schema({
     lastUpdated: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("Tracking", trackingSchema);
+export default mongoose.model("Tracking", trackingSchema); 

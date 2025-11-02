@@ -11,4 +11,4 @@ const knowledgeSchema = new mongoose.Schema({
     updatedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("Knowledge", knowledgeSchema);
+export default mongoose.model("Knowledge", knowledgeSchema); 

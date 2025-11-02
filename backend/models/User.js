@@ -9,4 +9,4 @@ const userSchema = new mongoose.Schema({
     lastLogin: { type: Date, default: null }
 });
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema); 
