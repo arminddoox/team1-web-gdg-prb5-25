@@ -1,76 +1,112 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Import pages (these will need to be created)
-import HomePage from './pages/HomePage';
-// import LoginPage from './pages/LoginPage';
-// import RegisterPage from './pages/RegisterPage';
-// import DashboardPage from './pages/DashboardPage';
-// import HabitsPage from './pages/HabitsPage';
-// import RoutinesPage from './pages/RoutinesPage';
-// import ProfilePage from './pages/ProfilePage';
-// import NotFoundPage from './pages/NotFoundPage';
+// Pages
+import AboutUsPage from "./pages/AboutUsPage";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import DashboardPage from "./pages/tracking/DashboardPage";
+import HabitsPage from "./pages/tracking/HabitsPage";
+import ProgressPage from "./pages/tracking/ProgressPage";
+import SettingsPage from "./pages/SettingsPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
-// Temporary placeholder components
-// const HomePage = () => <h1>Home Page</h1>;
-const LoginPage = () => <h1>Login Page</h1>;
-const RegisterPage = () => <h1>Register Page</h1>;
-const DashboardPage = () => <h1>Dashboard</h1>;
-const HabitsPage = () => <h1>Habits</h1>;
-const RoutinesPage = () => <h1>Routines</h1>;
-const ProfilePage = () => <h1>Profile</h1>;
-const NotFoundPage = () => <h1>404 - Page Not Found</h1>;
+// Components
+import Sidebar from "./components/Sidebar";
 
-// Protected Route Component (redirect if not authenticated)
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = true; // mock authentication status
-  if (!isAuthenticated) {
+// ========== RouteGuard ==========
+const RouteGuard = ({ type, children }) => {
+  const isAuthenticated = true; // TODO: replace with real auth logic
+
+  if (type === "protected" && !isAuthenticated)
     return <Navigate to="/login" replace />;
-  }
-  return children;
-};
-
-// Public Route Component (redirect if already authenticated)
-const PublicRoute = ({ children }) => {
-  const isAuthenticated = false; // mock authentication status
-  if (isAuthenticated) {
+  if (type === "public" && isAuthenticated)
     return <Navigate to="/dashboard" replace />;
-  }
+
   return children;
 };
 
-function App() {
+// ========== AppLayout ==========
+const AppLayout = ({ children }) => (
+  <div className="app-layout">
+    <Sidebar />
+    <main>{children}</main>
+  </div>
+);
+
+// ========== App ==========
+export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={
+          <AboutUsPage />
+        } />
 
         {/* Public Routes */}
-        <Route path="/login" element={<PublicRoute>
-          <LoginPage />
-        </PublicRoute>} />
-        <Route path="/register" element={<PublicRoute>
-          <RegisterPage />
-        </PublicRoute>} />
+        <Route
+          path="/login"
+          element={
+            <RouteGuard type="public">
+              <LoginPage />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <RouteGuard type="public">
+              <RegisterPage />
+            </RouteGuard>
+          }
+        />
 
         {/* Protected Routes */}
-        <Route path="/dashboard" element={<ProtectedRoute>
-          <DashboardPage />
-        </ProtectedRoute>} />
-        <Route path="/habits" element={<ProtectedRoute>
-          <HabitsPage />
-        </ProtectedRoute>} />
-        <Route path="/routines" element={<ProtectedRoute>
-          <RoutinesPage />
-        </ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute>
-          <ProfilePage />
-        </ProtectedRoute>} />
+        <Route
+          path="/dashboard"
+          element={
+            <RouteGuard type="protected">
+              <AppLayout>
+                <DashboardPage />
+              </AppLayout>
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/habits"
+          element={
+            <RouteGuard type="protected">
+              <AppLayout>
+                <HabitsPage />
+              </AppLayout>
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/progress"
+          element={
+            <RouteGuard type="protected">
+              <AppLayout>
+                <ProgressPage />
+              </AppLayout>
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <RouteGuard type="protected">
+              <AppLayout>
+                <SettingsPage />
+              </AppLayout>
+            </RouteGuard>
+          }
+        />
 
         {/* 404 Not Found */}
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={
+          <NotFoundPage />
+        } />
       </Routes>
     </BrowserRouter>
   );
 }
-
-export default App;
