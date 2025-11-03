@@ -1,41 +1,44 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
-// Import pages (these will need to be created)
-// import AboutUsPage from './pages/AboutUsPage';
-// import LoginPage from './pages/auth/LoginPage';
-// import RegisterPage from './pages/auth/RegisterPage';
-// import DashboardPage from './pages/tracking/DashboardPage';
-// import HabitsPage from './pages/tracking/HabitsPage';
-// import ProgressPage from './pages/tracking/ProgressPage';
-// import SettingsPage from './pages/SettingsPage';
-// import NotFoundPage from './pages/NotFoundPage';
+// Importing all page components
+import AboutUsPage from './pages/AboutUsPage';
+import LoginPage from './pages/auth/LoginPage';
+import RegisterPage from './pages/auth/RegisterPage';
+import DashboardPage from './pages/tracking/DashboardPage';
+import HabitsPage from './pages/tracking/HabitsPage';
+import ProgressPage from './pages/tracking/ProgressPage';
+import SettingsPage from './pages/SettingsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-// Temporary placeholder components
-const AboutUsPage = () => <h1>About Us</h1>;
-const LoginPage = () => <h1>Login Page</h1>;
-const RegisterPage = () => <h1>Register Page</h1>;
-const DashboardPage = () => <h1>Dashboard</h1>;
-const HabitsPage = () => <h1>Habits</h1>;
-const ProgressPage = () => <h1>Progress</h1>;
-const SettingsPage = () => <h1>Settings</h1>;
-const NotFoundPage = () => <h1>404 - Page Not Found</h1>;
+// ========== Layout & Providers ==========
+// Importing Layout component
+import Layout from "./components/Layout"; // layout tổng thể (navbar, sidebar...)
+// RouteType Component to handle route protection
+const RouteType = ({ type, children }) => {
+  const isAuthenticated = true; // this will need to be replaced with actual authentication check
 
-// Protected Route Component (redirect if not authenticated)
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = true; // mock authentication status
-  if (!isAuthenticated) {
+  // Protected Route Component (redirect if not authenticated)
+  if (type === "protected" && !isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-  return children;
-};
 
-// Public Route Component (redirect if already authenticated)
-const PublicRoute = ({ children }) => {
-  const isAuthenticated = false; // mock authentication status
-  if (isAuthenticated) {
+  // Public Route Component (redirect if already authenticated)
+  if (type === "public" && isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }
+  
   return children;
+};
+// Wrapper component to include Providers and Layout
+const ProviderWrap = ({ children, routeType }) => {
+  // Sau này có thể thêm các Provider khác vào đây
+  return (
+    <RouteType type={routeType}>
+      <Layout>
+        {children}
+      </Layout>
+    </RouteType>
+  );
 };
 
 export default function App() {
@@ -45,26 +48,38 @@ export default function App() {
         <Route path="/" element={<AboutUsPage />} />
 
         {/* Public Routes */}
-        <Route path="/login" element={<PublicRoute>
-          <LoginPage />
-        </PublicRoute>} />
-        <Route path="/register" element={<PublicRoute>
-          <RegisterPage />
-        </PublicRoute>} />
+        <Route path="/login" element={
+          <ProviderWrap routeType="public">
+            <LoginPage />
+          </ProviderWrap>
+        } />
+        <Route path="/register" element={
+          <ProviderWrap routeType="public">
+            <RegisterPage />
+          </ProviderWrap>
+        } />
 
         {/* Protected Routes */}
-        <Route path="/dashboard" element={<ProtectedRoute>
-          <DashboardPage />
-        </ProtectedRoute>} />
-        <Route path="/habits" element={<ProtectedRoute>
-          <HabitsPage />
-        </ProtectedRoute>} />
-        <Route path="/progress" element={<ProtectedRoute>
-          <ProgressPage />
-        </ProtectedRoute>} />
-        <Route path="/settings" element={<ProtectedRoute>
-          <SettingsPage />
-        </ProtectedRoute>} />
+        <Route path="/dashboard" element={
+          <ProviderWrap routeType="protected">
+            <DashboardPage />
+          </ProviderWrap>
+        } />
+        <Route path="/habits" element={
+          <ProviderWrap routeType="protected">
+            <HabitsPage />
+          </ProviderWrap>
+        } />
+        <Route path="/progress" element={
+          <ProviderWrap routeType="protected">
+            <ProgressPage />
+          </ProviderWrap>
+        } />
+        <Route path="/settings" element={
+          <ProviderWrap routeType="protected">
+            <SettingsPage />
+          </ProviderWrap>
+        } />
 
         {/* 404 Not Found */}
         <Route path="*" element={<NotFoundPage />} />

@@ -1,8 +1,7 @@
-export default function HomePage() {
+export default function AboutUsPage() {
   return (
     <div>
-      <h1>Welcome to the Home Page</h1>
-      <p>This is the landing page of the application.</p>
+      <h1>Welcome to the AboutUsPage</h1>
       <hr />
       <i>(placeholder)</i>
     </div>
