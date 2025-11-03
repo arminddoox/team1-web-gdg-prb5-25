@@ -1,43 +1,47 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-// Importing all page components
-import AboutUsPage from './pages/AboutUsPage';
-import LoginPage from './pages/auth/LoginPage';
-import RegisterPage from './pages/auth/RegisterPage';
-import DashboardPage from './pages/tracking/DashboardPage';
-import HabitsPage from './pages/tracking/HabitsPage';
-import ProgressPage from './pages/tracking/ProgressPage';
-import SettingsPage from './pages/SettingsPage';
-import NotFoundPage from './pages/NotFoundPage';
+// Pages
+import AboutUsPage from "./pages/AboutUsPage";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import DashboardPage from "./pages/tracking/DashboardPage";
+import HabitsPage from "./pages/tracking/HabitsPage";
+import ProgressPage from "./pages/tracking/ProgressPage";
+import SettingsPage from "./pages/SettingsPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
-// ========== Layout & Providers ==========
-// Importing Layout component
-import Layout from "./components/Layout"; // layout tổng thể (navbar, sidebar...)
-// RouteType Component to handle route protection
-const RouteType = ({ type, children }) => {
-  const isAuthenticated = true; // this will need to be replaced with actual authentication check
+// Components
+import Sidebar from "./components/Sidebar";
 
-  // Protected Route Component (redirect if not authenticated)
-  if (type === "protected" && !isAuthenticated) {
+// ========== RouteGuard ==========
+const RouteGuard = ({ type, children }) => {
+  const isAuthenticated = true; // replace later with real auth
+
+  if (type === "protected" && !isAuthenticated)
     return <Navigate to="/login" replace />;
-  }
-
-  // Public Route Component (redirect if already authenticated)
-  if (type === "public" && isAuthenticated) {
+  if (type === "public" && isAuthenticated)
     return <Navigate to="/dashboard" replace />;
-  }
-  
+
   return children;
 };
-// Wrapper component to include Providers and Layout
-const ProviderWrap = ({ children, routeType }) => {
-  // Sau này có thể thêm các Provider khác vào đây
+
+// ========== AppLayout ==========
+const AppLayout = ({ children }) => {
   return (
-    <RouteType type={routeType}>
-      <Layout>
-        {children}
-      </Layout>
-    </RouteType>
+    <div>
+      <Sidebar />
+      <main>{children}</main>
+    </div>
+  );
+};
+
+// ========== AppProviders ==========
+const AppProviders = ({ children, routeType }) => {
+  // sau này có thể thêm AuthProvider, ThemeProvider, QueryClientProvider, ...
+  return (
+    <RouteGuard type={routeType}>
+      <AppLayout>{children}</AppLayout>
+    </RouteGuard>
   );
 };
 
@@ -49,36 +53,36 @@ export default function App() {
 
         {/* Public Routes */}
         <Route path="/login" element={
-          <ProviderWrap routeType="public">
+          <AppProviders routeType="public">
             <LoginPage />
-          </ProviderWrap>
+          </AppProviders>
         } />
         <Route path="/register" element={
-          <ProviderWrap routeType="public">
+          <AppProviders routeType="public">
             <RegisterPage />
-          </ProviderWrap>
+          </AppProviders>
         } />
 
         {/* Protected Routes */}
         <Route path="/dashboard" element={
-          <ProviderWrap routeType="protected">
+          <AppProviders routeType="protected">
             <DashboardPage />
-          </ProviderWrap>
+          </AppProviders>
         } />
         <Route path="/habits" element={
-          <ProviderWrap routeType="protected">
+          <AppProviders routeType="protected">
             <HabitsPage />
-          </ProviderWrap>
+          </AppProviders>
         } />
         <Route path="/progress" element={
-          <ProviderWrap routeType="protected">
+          <AppProviders routeType="protected">
             <ProgressPage />
-          </ProviderWrap>
+          </AppProviders>
         } />
         <Route path="/settings" element={
-          <ProviderWrap routeType="protected">
+          <AppProviders routeType="protected">
             <SettingsPage />
-          </ProviderWrap>
+          </AppProviders>
         } />
 
         {/* 404 Not Found */}
