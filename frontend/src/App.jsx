@@ -15,7 +15,7 @@ import Sidebar from "./components/Sidebar";
 
 // ========== RouteGuard ==========
 const RouteGuard = ({ type, children }) => {
-  const isAuthenticated = true; // replace later with real auth
+  const isAuthenticated = true; // TODO: replace with real auth logic
 
   if (type === "protected" && !isAuthenticated)
     return <Navigate to="/login" replace />;
@@ -26,67 +26,86 @@ const RouteGuard = ({ type, children }) => {
 };
 
 // ========== AppLayout ==========
-const AppLayout = ({ children }) => {
-  return (
-    <div>
-      <Sidebar />
-      <main>{children}</main>
-    </div>
-  );
-};
+const AppLayout = ({ children }) => (
+  <div className="app-layout">
+    <Sidebar />
+    <main>{children}</main>
+  </div>
+);
 
-// ========== AppProviders ==========
-const AppProviders = ({ children, routeType }) => {
-  // sau này có thể thêm AuthProvider, ThemeProvider, QueryClientProvider, ...
-  return (
-    <RouteGuard type={routeType}>
-      <AppLayout>{children}</AppLayout>
-    </RouteGuard>
-  );
-};
-
+// ========== App ==========
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AboutUsPage />} />
+        <Route path="/" element={
+          <AboutUsPage />
+        } />
 
         {/* Public Routes */}
-        <Route path="/login" element={
-          <AppProviders routeType="public">
-            <LoginPage />
-          </AppProviders>
-        } />
-        <Route path="/register" element={
-          <AppProviders routeType="public">
-            <RegisterPage />
-          </AppProviders>
-        } />
+        <Route
+          path="/login"
+          element={
+            <RouteGuard type="public">
+              <LoginPage />
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <RouteGuard type="public">
+              <RegisterPage />
+            </RouteGuard>
+          }
+        />
 
         {/* Protected Routes */}
-        <Route path="/dashboard" element={
-          <AppProviders routeType="protected">
-            <DashboardPage />
-          </AppProviders>
-        } />
-        <Route path="/habits" element={
-          <AppProviders routeType="protected">
-            <HabitsPage />
-          </AppProviders>
-        } />
-        <Route path="/progress" element={
-          <AppProviders routeType="protected">
-            <ProgressPage />
-          </AppProviders>
-        } />
-        <Route path="/settings" element={
-          <AppProviders routeType="protected">
-            <SettingsPage />
-          </AppProviders>
-        } />
+        <Route
+          path="/dashboard"
+          element={
+            <RouteGuard type="protected">
+              <AppLayout>
+                <DashboardPage />
+              </AppLayout>
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/habits"
+          element={
+            <RouteGuard type="protected">
+              <AppLayout>
+                <HabitsPage />
+              </AppLayout>
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/progress"
+          element={
+            <RouteGuard type="protected">
+              <AppLayout>
+                <ProgressPage />
+              </AppLayout>
+            </RouteGuard>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <RouteGuard type="protected">
+              <AppLayout>
+                <SettingsPage />
+              </AppLayout>
+            </RouteGuard>
+          }
+        />
 
         {/* 404 Not Found */}
-        <Route path="*" element={<NotFoundPage />} />
+        <Route path="*" element={
+          <NotFoundPage />
+        } />
       </Routes>
     </BrowserRouter>
   );
