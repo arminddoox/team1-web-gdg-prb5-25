@@ -1,23 +1,23 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 
 // Import pages (these will need to be created)
-import HomePage from './pages/HomePage';
-// import LoginPage from './pages/LoginPage';
-// import RegisterPage from './pages/RegisterPage';
-// import DashboardPage from './pages/DashboardPage';
-// import HabitsPage from './pages/HabitsPage';
-// import RoutinesPage from './pages/RoutinesPage';
-// import ProfilePage from './pages/ProfilePage';
+// import AboutUsPage from './pages/AboutUsPage';
+// import LoginPage from './pages/auth/LoginPage';
+// import RegisterPage from './pages/auth/RegisterPage';
+// import DashboardPage from './pages/tracking/DashboardPage';
+// import HabitsPage from './pages/tracking/HabitsPage';
+// import ProgressPage from './pages/tracking/ProgressPage';
+// import SettingsPage from './pages/SettingsPage';
 // import NotFoundPage from './pages/NotFoundPage';
 
 // Temporary placeholder components
-// const HomePage = () => <h1>Home Page</h1>;
+const AboutUsPage = () => <h1>About Us</h1>;
 const LoginPage = () => <h1>Login Page</h1>;
 const RegisterPage = () => <h1>Register Page</h1>;
 const DashboardPage = () => <h1>Dashboard</h1>;
 const HabitsPage = () => <h1>Habits</h1>;
-const RoutinesPage = () => <h1>Routines</h1>;
-const ProfilePage = () => <h1>Profile</h1>;
+const ProgressPage = () => <h1>Progress</h1>;
+const SettingsPage = () => <h1>Settings</h1>;
 const NotFoundPage = () => <h1>404 - Page Not Found</h1>;
 
 // Protected Route Component (redirect if not authenticated)
@@ -42,7 +42,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<AboutUsPage />} />
 
         {/* Public Routes */}
         <Route path="/login" element={<PublicRoute>
@@ -59,11 +59,11 @@ function App() {
         <Route path="/habits" element={<ProtectedRoute>
           <HabitsPage />
         </ProtectedRoute>} />
-        <Route path="/routines" element={<ProtectedRoute>
-          <RoutinesPage />
+        <Route path="/progress" element={<ProtectedRoute>
+          <ProgressPage />
         </ProtectedRoute>} />
-        <Route path="/profile" element={<ProtectedRoute>
-          <ProfilePage />
+        <Route path="/settings" element={<ProtectedRoute>
+          <SettingsPage />
         </ProtectedRoute>} />
 
         {/* 404 Not Found */}
