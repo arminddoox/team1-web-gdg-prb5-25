@@ -6,7 +6,7 @@ import createError from 'http-errors';
 import configs from './configs.js';
 
 // Routes would be imported here
-// import authRoutes from './routes/auth.js';
+import authRoutes from './routes/authRoutes.js';
 // import habitRoutes from './routes/habits.js';
 // import routineRoutes from './routes/routines.js';
 
@@ -60,7 +60,7 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
-// app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 // app.use('/api/habits', habitRoutes);
 // app.use('/api/routines', routineRoutes);
 
