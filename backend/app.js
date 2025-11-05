@@ -7,7 +7,7 @@ import configs from './configs.js';
 
 // Routes would be imported here
 import authRoutes from './routes/authRoutes.js';
-// import habitRoutes from './routes/habits.js';
+import trackingRoutes from './routes/trackingRoutes.js';
 // import routineRoutes from './routes/routines.js';
 
 const app = express();
@@ -61,7 +61,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 app.use('/api/auth', authRoutes);
-// app.use('/api/habits', habitRoutes);
+app.use('/api', trackingRoutes);
 // app.use('/api/routines', routineRoutes);
 
 // ============================================
