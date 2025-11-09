@@ -1,15 +1,35 @@
+import {
+    getKnowledgeService,
+    createKnowledgeService,
+    updateKnowledgeService,
+    deleteKnowledgeService
+} from "../services/knowledgeService.js";
+import { createHabitService } from "../services/trackingService.js";
+
+// Get knowledge entries
 export const getKnowledge = async (req, res) => {
-    res.json({ message: "get user knowledge data - to be implemented" });
+    const userId = req.body.userId || "testUserId";
+    const result = await getKnowledgeService(userId);
+    res.json(result);
 };
 
+// Create new knowledge entry
 export const createKnowledge = async (req, res) => {
-    res.json({ message: "create knowledge entry - to be implemented" });
+    const userId = req.body.userId || "testUserId";
+    const result = await createKnowledgeService(userId, req.body);
+    res.json(result);
 };
 
+// Update knowledge entry
 export const updateKnowledge = async (req, res) => {
-    res.json({ message: "update knowledge entry - to be implemented" });
+    const entryId = req.params.id;
+    const result = await updateKnowledgeService(entryId, req.body);
+    res.json(result);
 };
 
+// Delete knowledge entry
 export const deleteKnowledge = async (req, res) => {
-    res.json({ message: "delete knowledge entry - to be implemented" });
+    const entryId = req.params.id;
+    const result = await deleteKnowledgeService(entryId);
+    res.json(result);
 };

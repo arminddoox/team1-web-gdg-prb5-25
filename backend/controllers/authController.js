@@ -1,11 +1,20 @@
+import { registerUserService, loginUserService, logoutUserService } from "../services/authService.js";
+
+// Register new user
 export const registerUser = async (req, res) => {
-    res.json({ message: "register endpoint - to be implemented" });
+    const result = await registerUserService(req.body);
+    res.json(result);
 };
 
+// Login user
 export const loginUser = async (req, res) => {
-    res.json({ message: "login endpoint - to be implemented" });
+    const result = await loginUserService(req.body);
+    res.json(result);
 };
 
+// Logout user
 export const logoutUser = async (req, res) => {
-    res.json({ message: "logout endpoint - to be implemented" });
+    const userId = req.body.userId || null;
+    const result = await logoutUserService(userId);
+    res.json(result);
 };
