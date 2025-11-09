@@ -5,6 +5,11 @@ import helmet from 'helmet';
 import createError from 'http-errors';
 import configs from './configs.js';
 
+// Middlewares would be imported here
+import { loggerMiddleware } from './middlewares/loggerMiddleware.js';
+import { authMiddleware } from './middlewares/authMiddleware.js';
+import { validateBody } from './middlewares/validateMiddleware.js';
+
 // Routes would be imported here
 import authRoutes from './routes/authRoutes.js';
 import trackingRoutes from './routes/trackingRoutes.js';
@@ -37,17 +42,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ============================================
-// Request Logging (Simple)
+// Custom Middlewares
 // ============================================
 if (configs.NODE_ENV === 'development') {
-  app.use((req, res, next) => {
-    const start = Date.now();
-    res.on('finish', () => {
-      const duration = Date.now() - start;
-      console.log(`${req.method} ${req.path} ${res.statusCode} - ${duration}ms`);
-    });
-    next();
-  });
+  app.use(loggerMiddleware);
 }
 
 // ============================================
@@ -61,8 +59,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 app.use('/api/auth', authRoutes);
-app.use('/api', trackingRoutes);
-app.use('/api/knowledge', knowledgeRoutes);
+app.use('/api', authMiddleware, trackingRoutes);
+app.use('/api/knowledge', authMiddleware, knowledgeRoutes);
 
 // ============================================
 // 404 Handler
