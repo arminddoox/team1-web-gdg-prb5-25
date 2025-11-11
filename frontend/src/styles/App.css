@@ -1,1 +1,16 @@
-/*placeholder*/
+#root {
+  /* code đang hoạt động, đừng đụng vào XD*/
+  width: 102vw;
+  min-height: 100vh;
+  margin-top: -2vh;
+  margin-left: -2vw;
+  margin-bottom: -2vh;
+  padding-top: 2vh;
+  padding-left: 2vw;
+  padding-bottom: 2vh;
+
+  background-color: #191919;
+  font-family: "Inter", sans-serif;
+  color: white;
+  font-size: 16px;
+}
