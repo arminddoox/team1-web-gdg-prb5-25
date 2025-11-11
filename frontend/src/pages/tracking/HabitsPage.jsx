@@ -1,8 +1,8 @@
-export default function HabitsPage() {
+export default function ProgressPage() {
   return (
     <div>
-      <h1>Habits</h1>
-      {/* Add your habits tracking content here */}
+      <h1>Progress</h1>
+      {/* Add your progress tracking content here */}
     </div>
   );
 }
