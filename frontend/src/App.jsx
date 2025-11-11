@@ -7,7 +7,6 @@ import AboutUsPage from "./pages/AboutUsPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/tracking/DashboardPage";
-// Make sure this import path matches the real file name on disk:
 import HabitsPage from "./pages/tracking/HabitsPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -46,7 +45,7 @@ const AppLayout = ({ children }) => (
 // ========== App ==========
 export default function App() {
   return (
-    <BrowserRouter>
+    
       <Routes>
         {/* Root: redirect depending on auth */}
         <Route
@@ -124,6 +123,5 @@ export default function App() {
         {/* 404 Not Found */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </BrowserRouter>
   );
 }

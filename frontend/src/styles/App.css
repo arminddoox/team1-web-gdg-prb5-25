@@ -73,3 +73,147 @@
   color: white;
   font-size: 16px;
 }
+/* Auth pages */
+/* Auth pages (Refined to match screenshot) */
+.auth-root { min-height:100vh; display:flex; background:#191919; color:#fff; align-items:stretch; }
+
+/* left column */
+.auth-left { width:420px; min-width:320px; padding:56px 32px; display:flex; align-items:center; background:#141414; }
+.auth-left-inner { max-width:320px; }
+.illustration-img { width:260px; height:160px; object-fit:cover; border-radius:8px; box-shadow: 0 12px 28px rgba(0,0,0,0.6); }
+
+/* right/form */
+.auth-right { flex:1; display:flex; align-items:center; justify-content:center; padding:48px; }
+.auth-card--centered { max-width:520px; text-align:center; padding:40px 36px; background:transparent; border:none; box-shadow:none; }
+.auth-title { font-size:56px; font-weight:800; margin:0 0 18px; color:#fff; }
+.label.small { display:inline-flex; align-items:center; gap:8px; color:#9aa7b3; font-size:14px; margin-bottom:8px; }
+.input { width:420px; max-width:100%; margin:0 auto; }
+
+/* Primary button style matched to screenshot */
+.btn.primary.large { width:420px; max-width:100%; padding:12px 18px; border-radius:8px; background:#2783de; border:none; color:white; font-weight:600; box-shadow:none; }
+
+/* Provider buttons */
+.btn.provider { width:420px; max-width:100%; padding:10px 14px; border-radius:8px; background:#1f1f1f; border:1px solid rgba(255,255,255,0.03); color:#cbd5df; margin-top:12px; }
+
+/* divider */
+.divider { width:420px; max-width:100%; height:1px; background:rgba(255,255,255,0.06); margin:18px auto; }
+
+/* legal text */
+.legal { margin-top:22px; color:#7a7a7a; font-size:12px; line-height:1.4; text-align:center; }
+
+/* small responsive tweaks */
+@media (max-width: 900px){
+  .auth-root { flex-direction:column; }
+  .auth-left { width:100%; min-width:0; padding:28px; text-align:center; }
+  .auth-card--centered { padding:28px; }
+  .input, .btn.primary.large, .btn.provider, .divider { width:320px; }
+}
+
+/* ---------- Centered auth pages (no left panel) ---------- */
+.centered-auth {
+  min-height: 100vh;
+  display: block;
+  position: relative;
+  background: #191919;
+  color: #fff;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+}
+
+/* top-left brand (same look as homepage) */
+.auth-top-brand {
+  position: absolute;
+  left: 28px;
+  top: 24px;
+  z-index: 10;
+}
+.auth-top-brand .hb-brand {
+  font-weight: 900;
+  font-size: 20px;
+  color: #ffffff;
+}
+
+/* wrap to center card vertically/horizontally */
+.auth-card--wrap {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  box-sizing: border-box;
+}
+
+/* card adjustments for the centered single-column design */
+.auth-card--centered {
+  width: 560px;
+  max-width: calc(100% - 40px);
+  padding: 24px 28px 20px;
+  border-radius: 8px;
+  background: transparent; /* keep dark page background */
+  border: none;
+  box-shadow: none;
+  text-align: center;
+}
+
+/* Title big like screenshot */
+.auth-title {
+  font-size: 56px;
+  font-weight: 800;
+  margin: 0 0 20px;
+  color: #ffffff;
+  line-height: 1;
+}
+
+/* Inputs/buttons sizing */
+.field { display:block; margin-bottom:12px; text-align:left; }
+.field .label { color: #9aa7b3; font-size:13px; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+  color: #fff;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+.input:focus { outline: none; box-shadow: 0 0 0 3px rgba(39,131,222,0.09); border-color: rgba(39,131,222,0.7); }
+
+/* wide primary button */
+.btn.primary.large {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 6px;
+  background: #2783de;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* provider buttons and divider */
+.divider { height:1px; background: rgba(255,255,255,0.06); margin: 18px 0; width: 100%; }
+.btn.provider {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 6px;
+  background: #1f1f1f;
+  border: 1px solid rgba(255,255,255,0.03);
+  color: #cbd5df;
+  margin-top: 8px;
+}
+
+/* small toggle under the form */
+.small-toggle { margin-top: 12px; color: #9aa7b3; font-size: 14px; }
+.link-toggle { color: #cfe6ff; text-decoration: none; font-weight: 600; margin-left:6px; }
+
+/* legal text */
+.legal { margin-top: 18px; color: #7a7a7a; font-size: 12px; line-height: 1.4; }
+
+/* column actions helper */
+.actions.column { display:flex; flex-direction:column; align-items:center; }
+
+/* responsive */
+@media (max-width: 640px) {
+  .auth-title { font-size: 40px; }
+  .auth-card--centered { width: 92%; padding: 18px; }
+}
