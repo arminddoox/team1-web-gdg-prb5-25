@@ -5,10 +5,15 @@ import helmet from 'helmet';
 import createError from 'http-errors';
 import configs from './configs.js';
 
+// Middlewares would be imported here
+import { loggerMiddleware } from './middlewares/loggerMiddleware.js';
+import { authMiddleware } from './middlewares/authMiddleware.js';
+import { validateBody } from './middlewares/validateMiddleware.js';
+
 // Routes would be imported here
-// import authRoutes from './routes/auth.js';
-// import habitRoutes from './routes/habits.js';
-// import routineRoutes from './routes/routines.js';
+import authRoutes from './routes/authRoutes.js';
+import trackingRoutes from './routes/trackingRoutes.js';
+import knowledgeRoutes from './routes/knowledgeRoutes.js';
 
 const app = express();
 
@@ -37,17 +42,10 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ============================================
-// Request Logging (Simple)
+// Custom Middlewares
 // ============================================
 if (configs.NODE_ENV === 'development') {
-  app.use((req, res, next) => {
-    const start = Date.now();
-    res.on('finish', () => {
-      const duration = Date.now() - start;
-      console.log(`${req.method} ${req.path} ${res.statusCode} - ${duration}ms`);
-    });
-    next();
-  });
+  app.use(loggerMiddleware);
 }
 
 // ============================================
@@ -60,9 +58,9 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
-// app.use('/api/auth', authRoutes);
-// app.use('/api/habits', habitRoutes);
-// app.use('/api/routines', routineRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api', authMiddleware, trackingRoutes);
+app.use('/api/knowledge', authMiddleware, knowledgeRoutes);
 
 // ============================================
 // 404 Handler
