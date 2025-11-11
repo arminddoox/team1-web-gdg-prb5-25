@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Pages
+import HomePage from "./pages/HomePage";
 import AboutUsPage from "./pages/AboutUsPage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
@@ -23,9 +24,15 @@ const isAuthenticated = true; // TODO: replace with real auth logic
 
 // ========== RouteGuard ==========
 const RouteGuard = ({ type, children }) => {
-  // uses top-level isAuthenticated
-  if (type === "protected" && !isAuthenticated) return <Navigate to="/login" replace />;
-  if (type === "public" && isAuthenticated) return <Navigate to="/dashboard" replace />;
+  const isAuthenticated = true; // TODO: replace with real auth logic
+
+  if (type === "protected" && !isAuthenticated) {
+    // return <Navigate to="/login" replace />;
+  }
+  if (type === "public" && isAuthenticated) {
+    // return <Navigate to="/dashboard" replace />;
+  }
+
   return children;
 };
 
