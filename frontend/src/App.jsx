@@ -11,14 +11,13 @@ import DashboardPage from "./pages/tracking/DashboardPage";
 import HabitsPage from "./pages/tracking/HabitsPage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import HomePage from "./pages/HomePage";
 
 // Components
 import Sidebar from "./components/Sidebar";
 
 /* ===== NOTE =====
-   For now we keep a top-level flag so both RouteGuard and the root redirect can read it.
-   Replace with your real auth check (context/hook) later.
+  For now we keep a top-level flag so both RouteGuard and the root redirect can read it.
+  Replace with your real auth check (context/hook) later.
 */
 const isAuthenticated = true; // TODO: replace with real auth logic
 
