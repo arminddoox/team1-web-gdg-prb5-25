@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const knowledgeSchema = new mongoose.Schema({
   type: { type: String, required: true },
@@ -8,7 +8,7 @@ const knowledgeSchema = new mongoose.Schema({
   scoreWeight: { type: Number, default: 0 },
   createdBy: { type: mongoose.Schema.Types.Mixed, default: null },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model("Knowledge", knowledgeSchema);
+export default mongoose.model('Knowledge', knowledgeSchema);

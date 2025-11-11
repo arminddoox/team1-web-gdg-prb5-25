@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import {
     getAllHabits,
     createHabit,
@@ -6,18 +6,22 @@ import {
     deleteHabit,
     markHabitComplete,
     getTrackingSummary,
-} from "../controllers/trackingController.js";
+} from '../controllers/trackingController.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
+// Apply auth middleware to all tracking routes
+router.use(authMiddleware);
+
 // Habit CRUD
-router.get("/habits", getAllHabits);
-router.post("/habits", createHabit);
-router.put("/habits/:id", updateHabit);
-router.delete("/habits/:id", deleteHabit);
+router.get('/habits', getAllHabits);          // Fetch all habits
+router.post('/habits', createHabit);          // Create a new habit
+router.put('/habits/:id', updateHabit);       // Update habit
+router.delete('/habits/:id', deleteHabit);    // Delete habit
 
 // Tracking
-router.post("/track/:habitId", markHabitComplete);
-router.get("/track", getTrackingSummary);
+router.post('/track/:habitId', markHabitComplete); // Mark habit as complete
+router.get('/track', getTrackingSummary);          // Get overall tracking summary
 
 export default router;
