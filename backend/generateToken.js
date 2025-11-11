@@ -1,7 +1,3 @@
-import dotenv from "dotenv";
-import path from "path";
-dotenv.config({ path: path.resolve('../.env') });
-
 import jwt from "jsonwebtoken";
 import configs from "./configs.js";
 
@@ -12,12 +8,11 @@ const userPayload = {
     admin: false
 };
 
-console.log("JWT_SECRET =", configs.JWT_SECRET);
+// console.log(`JWT_SECRET = ${configs.JWT_SECRET}`);
 
 // Generate token
 const token = jwt.sign(userPayload, configs.JWT_SECRET, {
-    expiresIn: "1h", // valid for 1 hour
+    expiresIn: configs.JWT_EXPIRES_IN,
 });
 
-console.log("Dummy JWT token:");
-console.log(token);
+// console.log(`Dummy JWT token: ${token}`);
