@@ -1,16 +1,19 @@
 // Placeholder functions for Auth Module
 
 // Register a new user
-export const registerUserService = async (userData) => {
-    return { message: "registerUserService - user created (placeholder)", data: userData };
+export const registerUserService = async ({ email, password }) => {
+    // TODO: integrate Mongo + hash password
+    return { id: '123', email, authProviders: ['local'] };
 };
 
 // Login user
-export const loginUserService = async (credentials) => {
-    return { message: "loginUserService - login successful (placeholder)", data: credentials };
+export const loginUserService = async (email, password) => {
+    // TODO: real login logic later
+    return { token: 'fake-jwt-token', user: { id: '123', email } };
 };
 
 // Logout user
 export const logoutUserService = async (userId) => {
-    return { message: "logoutUserService - user logged out (placeholder)", userId };
+    // TODO: invalidate session
+    return { message: `User ${userId} logged out.` };
 };
