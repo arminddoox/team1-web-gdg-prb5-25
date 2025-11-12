@@ -1,10 +1,33 @@
+
+/*=== code đang hoạt động, đừng đụng vào XD ===*/
+#root {
+  width: 100vw;
+  min-height: 100vh;
+  background-color: #191919;
+  font-family: "Inter", sans-serif;
+  color: white;
+  font-size: 16px;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  
+}
+
+html, body, * {
+  scrollbar-width: thin;
+  scrollbar-color: #555 #191919;
+}
+
+
 /* ===== HomePage (no sidebar) styles — append to App.css ===== */
 .hb-root { background:#191919; color:#fff; min-height:100vh; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; padding: 24px 20px; box-sizing:border-box; }
 .hb-header { display:flex; align-items:center; gap:12px; }
 .hb-brand { font-weight:900; font-size:28px; color:#fff; }
 
 .hb-greeting-wrap { margin-top:22px; margin-left:0; }
-.hb-greeting { font-size:34px; margin:0 0 18px 0; color:#fff; }
+.hb-greeting { font-size:34px; margin:0 0 18px 0; color:#fff; text-align: center;}
 
 .hb-container { max-width:1150px; margin: 0 auto; padding-bottom:48px; }
 
@@ -44,7 +67,7 @@
 .hb-cal-day-active { width:32px; height:32px; border-radius:50%; background:#f04d23; display:flex; align-items:center; justify-content:center; color:#fff; }
 
 /* CTA */
-.hb-cta-row { margin-top:18px; display:flex; justify-content:center; }
+.hb-cta-row { position: fixed; bottom: 48px; right:32px; margin-top:18px; display:flex; justify-content:center; }
 .hb-new-habit-btn { background:#2783de; border:1px solid #4393e2; border-radius:6px; padding:10px 14px; color:#fff; display:flex; gap:8px; align-items:center; cursor:pointer; }
 .hb-plus-icon { width:18px; height:18px; }
 
@@ -57,22 +80,8 @@
   .hb-future-row { flex-direction: column; gap:12px; }
   .hb-future-left, .hb-calendar { width:100%; }
 }
-#root {
-  /* code đang hoạt động, đừng đụng vào XD*/
-  width: 102vw;
-  min-height: 100vh;
-  margin-top: -2vh;
-  margin-left: -2vw;
-  margin-bottom: -2vh;
-  padding-top: 2vh;
-  padding-left: 2vw;
-  padding-bottom: 2vh;
 
-  background-color: #191919;
-  font-family: "Inter", sans-serif;
-  color: white;
-  font-size: 16px;
-}
+
 /* Auth pages */
 /* Auth pages (Refined to match screenshot) */
 .auth-root { min-height:100vh; display:flex; background:#191919; color:#fff; align-items:stretch; }

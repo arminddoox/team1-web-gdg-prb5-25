@@ -1,7 +1,7 @@
-// frontend/src/hooks/useAuth.js
+// frontend/src/hooks/useAuth.jsx
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { authApi } from "../api/authApi";
-import { api, getToken, clearToken } from "../api/axios";
+import { api /*, getToken, clearToken*/ } from "../api/axios";
 import { useNavigate } from "react-router-dom";
 
 /**
@@ -16,44 +16,33 @@ import { useNavigate } from "react-router-dom";
  *  - provides user, loading, error and auth methods
  */
 
-// -- Context: đoạn này ko hiểu
-const AuthContext = createContext(null);
-
-export function AuthProvider({ children }) {
-  const auth = useProvideAuth();
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
-}
-
-export default function useAuth() {
-  return useContext(AuthContext);
-}
-
 // -- internal provider hook
 function useProvideAuth() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null); // current user object
-  const [loading, setLoading] = useState(true); // initial loading (check token)
+  // const [loading, setLoading] = useState(true); // initial loading (check token)
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   // fetch profile if token exists
   const loadProfile = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+    // setLoading(true);
+    // setError(null);
     try {
-      const token = getToken();
-      if (!token) {
-        setUser(null);
-        return;
-      }
-      // call your API to get profile (expects /users/profile or similar)
-      // using `api.get('/users/profile')` will auto-unwrap response per axios.js
-      const profile = await api.get("/users/profile");
-      setUser(profile);
+      // const token = getToken();
+      // if (!token) {
+      //   setUser(null);
+      //   return;
+      // }
+      // // call your API to get profile (expects /users/profile or similar)
+      // // using `api.get('/users/profile')` will auto-unwrap response per axios.js
+      // const profile = await api.get("/users/profile");
+      // setUser(profile);
     } catch (err) {
-      // token invalid, clear
-      clearToken();
-      setUser(null);
-      if (import.meta.env.DEV) console.error("Failed to fetch profile:", err);
+      // // token invalid, clear
+      // clearToken();
+      // setUser(null);
+      // if (import.meta.env.DEV) console.error("Failed to fetch profile:", err);
     } finally {
       setLoading(false);
     }
@@ -77,13 +66,10 @@ function useProvideAuth() {
       if (data?.user) {
         setUser(data.user);
       } else {
-        // if API response only returns minimal, try to fetch profile
         try {
           const profile = await api.get("/users/profile");
           setUser(profile);
-        } catch (err) {
-          // ignore
-        }
+        } catch (err) { /* ignore */ }
       }
       setLoading(false);
       return data;
@@ -106,7 +92,7 @@ function useProvideAuth() {
         try {
           const profile = await api.get("/users/profile");
           setUser(profile);
-        } catch (err) {}
+        } catch (err) { /* ignore */ }
       }
       setLoading(false);
       return data;
@@ -125,8 +111,7 @@ function useProvideAuth() {
     // navigate to login (authApi.logout already redirects as safeguard)
     try {
       navigate("/login");
-    } catch (e) {
-    }
+    } catch (err) { /* ignore */ }
   };
 
   return {
@@ -139,4 +124,15 @@ function useProvideAuth() {
     logout,
     reload: loadProfile,
   };
+}
+
+const AuthContext = createContext(null);
+
+export function AuthProvider({ children }) {
+  const auth = useProvideAuth();
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+}
+
+export default function useAuth() {
+  return useContext(AuthContext);
 }
