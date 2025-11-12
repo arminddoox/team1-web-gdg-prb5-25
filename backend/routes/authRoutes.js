@@ -10,6 +10,6 @@ router.post('/register', authController.registerUser);
 router.post('/login', authController.loginUser);
 
 // Logout user
-router.post('/logout', authController.logoutUser); // Assuming logoutUser exists in authController
+router.post('/logout', authController.logoutUser);
 
 export default router;
