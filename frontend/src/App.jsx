@@ -1,5 +1,7 @@
 // frontend/src/App.jsx
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { registerNavigate } from './api/axios';
 
 // Pages
 import HomePage from "./pages/HomePage";
@@ -44,6 +46,12 @@ const AppLayout = ({ children }) => (
 
 // ========== App ==========
 export default function App() {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    registerNavigate(navigate);
+  }, [navigate]);
+
   return (
     
       <Routes>

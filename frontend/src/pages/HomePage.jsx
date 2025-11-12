@@ -104,7 +104,8 @@ export default function HomePage() {
             <SmallCard title="Uống nước" emoji="💧" />
             <SmallCard title="Một habit tên dàu" emoji="🍼" />
             <SmallCard title="Dậy sớm" emoji="⏰" />
-            <SmallCard title="Uống nước" emoji="🚨" />
+            <SmallCard title="Học bài" emoji="🚨" />
+            <SmallCard title="Uống nước" emoji="💧" />
             <SmallCard title="Uống nước" emoji="💧" />
           </div>
         </section>
@@ -117,6 +118,8 @@ export default function HomePage() {
           </div>
 
           <div className="hb-articles-row">
+            <ArticleCard />
+            <ArticleCard />
             <ArticleCard />
             <ArticleCard />
             <ArticleCard />
@@ -145,6 +148,8 @@ export default function HomePage() {
           </div>
 
           <div className="hb-articles-row">
+            <ArticleCard />
+            <ArticleCard />
             <ArticleCard />
             <ArticleCard />
             <ArticleCard />
