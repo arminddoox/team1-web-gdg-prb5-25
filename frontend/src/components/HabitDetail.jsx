@@ -34,7 +34,6 @@ export default function HabitDetail({ habit, onMarkDone, onUpdate }) {
     <div className="hb-habit-detail">
       <div className="detail-head">
         <div className="title">
-          <div className="emoji" aria-hidden>{habit.emoji ?? "🔔"}</div>
           <div>
             <h3 style={{margin:0}}>{habit.name}</h3>
             <div className="muted">{habit.streak || 0}-day streak</div>
@@ -54,6 +53,7 @@ export default function HabitDetail({ habit, onMarkDone, onUpdate }) {
 
       <hr className="muted-sep" />
 
+    <div className="detail-wrapper">
       <section className="detail-section">
         <h4 className="section-title">Description</h4>
         <div className="section-body">{habit.description}</div>
@@ -102,7 +102,7 @@ export default function HabitDetail({ habit, onMarkDone, onUpdate }) {
           })()}
         </div>
       </section>
-
+    </div>
     </div>
   );
 }

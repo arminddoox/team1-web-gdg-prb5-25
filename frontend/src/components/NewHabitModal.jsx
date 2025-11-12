@@ -8,7 +8,7 @@ import React, { useState } from "react";
 export default function NewHabitModal({ visible, onClose, onCreate }) {
   const [name, setName] = useState("");
   const [desc, setDesc] = useState("");
-  const [emoji, setEmoji] = useState("💧");
+  const [emoji, setEmoji] = useState("🎯");
 
   if (!visible) return null;
 
@@ -24,21 +24,21 @@ export default function NewHabitModal({ visible, onClose, onCreate }) {
   return (
     <div className="modal-backdrop" role="dialog" aria-modal>
       <div className="modal">
-        <h3>Create habit</h3>
+        <h3 className="padding-bottom">Create habit</h3>
         <form onSubmit={submit}>
           <label className="field">
             <div className="label">Name</div>
-            <input value={name} onChange={(e) => setName(e.target.value)} required />
+            <input className="input" value={name} onChange={(e) => setName(e.target.value)} required />
           </label>
 
           <label className="field">
             <div className="label">Emoji</div>
-            <input value={emoji} onChange={(e) => setEmoji(e.target.value)} />
+            <input className="input" value={emoji} onChange={(e) => setEmoji(e.target.value)} />
           </label>
 
           <label className="field">
             <div className="label">Description</div>
-            <textarea value={desc} onChange={(e) => setDesc(e.target.value)} />
+            <textarea className="input" value={desc} onChange={(e) => setDesc(e.target.value)} />
           </label>
 
           <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>

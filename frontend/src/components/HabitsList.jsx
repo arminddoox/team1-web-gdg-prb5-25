@@ -11,7 +11,7 @@ export default function HabitsList({ habits = [], selectedId, onSelect, viewMode
   return (
     <div className="hb-habits-list">
       <div className="hb-habits-actions">
-        <button className="hb-quick-btn" onClick={onAdd}>+ Add a new habit</button>
+        <button className="hb-quick-btn" onClick={onAdd}>Add a new habit</button>
       </div>
 
       <div className="hb-habits-scroll" role="list">

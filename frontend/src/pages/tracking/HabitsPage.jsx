@@ -5,6 +5,7 @@ import HabitDetail from "../../components/HabitDetail";
 import NewHabitModal from "../../components/NewHabitModal.jsx";
 import "../../styles/App.css";
 
+
 /**
  * HabitsPage
  * - Manages habits state (localStorage-backed)
@@ -131,7 +132,7 @@ export default function HabitsPage() {
     <div className="hb-root hb-habits-page">
       <div className="hb-header">
         <div className="hb-brand">HaBiD</div>
-        <h2 className="hb-greeting">Dashboard</h2>
+        <h2 className="hb-greeting">Habits</h2>
       </div>
 
       <div className="hb-container hb-habits-centered">
@@ -151,11 +152,6 @@ export default function HabitsPage() {
                     placeholder="Search for habits..."
                     aria-label="Search habits"
                   />
-                </div>
-
-                <div className="view-toggle">
-                  <button className={`toggle-btn ${viewMode === "cards" ? "active" : ""}`} onClick={() => setViewMode("cards")}>Cards</button>
-                  <button className={`toggle-btn ${viewMode === "table" ? "active" : ""}`} onClick={() => setViewMode("table")}>List</button>
                 </div>
               </div>
             </div>

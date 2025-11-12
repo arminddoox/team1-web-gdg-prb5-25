@@ -39,7 +39,6 @@ const RouteGuard = ({ type, children }) => {
 // ========== AppLayout ==========
 const AppLayout = ({ children }) => (
   <div className="app-layout">
-    <Sidebar />
     <main>{children}</main>
   </div>
 );

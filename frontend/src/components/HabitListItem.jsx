@@ -48,6 +48,8 @@ const Icon = {
       <circle cx="19" cy="12" r="1.5" fill="currentColor" />
     </svg>
   ),
+
+  
   Check: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -84,9 +86,10 @@ export default function HabitListItem({
       onKeyDown={(e) => { if (e.key === "Enter") onSelect?.(); }}
     >
       {/* Checkbox / quick mark */}
+      <div className="start-row">
       <div className="col col-checkbox">
         <button
-          className={`icon-btn circle ${todayDone ? "active" : ""}`}
+          className={`icon-btn ${todayDone ? "active" : ""}`}
           onClick={(e) => { e.stopPropagation(); onQuickMark?.(habit.id); }}
           title={todayDone ? "Already done today" : "Mark done today"}
           aria-pressed={todayDone}
@@ -97,11 +100,9 @@ export default function HabitListItem({
 
       {/* Emoji + name */}
       <div className="col col-name">
-        <div className="emoji">{habit.emoji ?? "🔔"}</div>
-        <div className="name-wrap">
+        
           <div className="h-name">{habit.name}</div>
-          <div className="h-sub small">{habit.description && habit.description.slice(0, 60)}</div>
-        </div>
+        
       </div>
 
       {/* Status */}
@@ -111,23 +112,18 @@ export default function HabitListItem({
         </div>
       </div>
 
-      {/* Streak */}
-      <div className="col col-streak">
-        <div className="streak">{habit.streak || 0} <span className="small muted">days</span></div>
-      </div>
-
       {/* Last activity */}
       <div className="col col-last">{habit.history?.length ? new Date(habit.history[habit.history.length - 1]).toLocaleDateString() : "-"}</div>
-
+        </div>
       {/* Actions */}
       <div className="col col-actions" onClick={(e) => e.stopPropagation()}>
-        <button className="icon-btn" title="Open calendar">
+        <button className="icon-btn no-border" title="Open calendar">
           <Icon.Calendar />
         </button>
-        <button className="icon-btn" title="Edit" onClick={() => onEdit?.(habit.id)}>
+        <button className="icon-btn no-border" title="Edit" onClick={() => onEdit?.(habit.id)}>
           <Icon.Edit />
         </button>
-        <button className="icon-btn" title="More">
+        <button className="icon-btn no-border" title="More">
           <Icon.More />
         </button>
         <button className="small ghost" onClick={() => onDelete?.(habit.id)}>Delete</button>

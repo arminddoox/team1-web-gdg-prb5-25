@@ -1,5 +1,8 @@
 // frontend/src/pages/HomePage.jsx
 import React from "react";
+import { useState } from "react";
+import NewHabitModal from "../components/NewHabitModal";
+import NewHabitButton from "../components/NewHabitButton";
 
 /* Figma asset URLs (hotlinked) */
 const imgOriginalImage1 = "https://www.figma.com/api/mcp/asset/9211e221-c4e9-4c55-892c-65149d64db1e";
@@ -77,8 +80,32 @@ function Calendar() {
   );
 }
 
+const LS_KEY = "habits_data_v1";
+
+function loadHabits() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return defaultHabits;
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed load habits", e);
+    return defaultHabits;
+  }
+}
+
 /* Main HomePage component (no sidebar) */
 export default function HomePage() {
+    const [habits, setHabits] = useState(() => loadHabits());
+
+    const [showModal, setShowModal] = useState(false);
+    const addHabit = (newHabit) => {
+        setHabits((prev) => {
+        const updated = [{ ...newHabit, id: `h_${Date.now()}`, history: [], streak: 0, status: "No activity yet" }, ...prev];
+        return updated;
+        });
+        setShowModal(false);
+    };
+
   return (
     <div className="hb-root">
       {/* Top-left brand */}
@@ -156,15 +183,9 @@ export default function HomePage() {
             <ArticleCard />
           </div>
         </section>
-
-        {/* Add new habit (CTA) */}
-        <div className="hb-cta-row">
-          <button className="hb-new-habit-btn">
-            <span>New habit</span>
-            <img src={plusIcon} alt="plus" className="hb-plus-icon" />
-          </button>
-        </div>
       </div>
+      <NewHabitButton onAdd={() => setShowModal(true)} />
+      <NewHabitModal visible={showModal} onClose={() => setShowModal(false)} onCreate={addHabit} />
     </div>
   );
 }

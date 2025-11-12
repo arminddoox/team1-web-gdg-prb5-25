@@ -4,6 +4,8 @@ import StatCard from "../../components/StatCard";
 import HabitCard from "../../components/HabitCard";
 import QuickActions from "../../components/QuickActions";
 import "../../styles/App.css";
+import NewHabitButton from "../../components/NewHabitButton";
+import NewHabitModal from "../../components/NewHabitModal.jsx";
 
 const sampleHabits = [
   { id: 1, title: "Uống nước", subtitle: "Haven't done in 5 days", desc: "Description, completion rate,", edited: "last edited Oct 25,2025", emoji: "💧" },
@@ -13,9 +15,32 @@ const sampleHabits = [
   { id: 5, title: "Không hút thuốc", subtitle: "Haven't done in 5 days", desc: "Description, completion rate,", edited: "last edited Oct 25,2025", emoji: "🚭" },
 ];
 
+const LS_KEY = "habits_data_v1";
+
+function loadHabits() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return defaultHabits;
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error("Failed load habits", e);
+    return defaultHabits;
+  }
+}
+
 export default function DashboardPage() {
   // viewMode: 'cards' or 'table'
   const [viewMode, setViewMode] = useState("cards");
+  const [habits, setHabits] = useState(() => loadHabits());
+
+    const [showModal, setShowModal] = useState(false);
+    const addHabit = (newHabit) => {
+        setHabits((prev) => {
+        const updated = [{ ...newHabit, id: `h_${Date.now()}`, history: [], streak: 0, status: "No activity yet" }, ...prev];
+        return updated;
+        });
+        setShowModal(false);
+    };
 
   return (
     <div className="hb-root hb-dashboard-root compact-dashboard">
@@ -110,7 +135,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <button className="hb-new-habit-btn hb-dashboard-fab"><span>New habit</span></button>
+      <NewHabitButton onAdd={() => setShowModal(true)} />
+      <NewHabitModal visible={showModal} onClose={() => setShowModal(false)} onCreate={addHabit} />
     </div>
   );
 }
