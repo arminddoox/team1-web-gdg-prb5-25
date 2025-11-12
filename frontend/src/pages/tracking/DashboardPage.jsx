@@ -17,6 +17,34 @@ const sampleHabits = [
 
 const LS_KEY = "habits_data_v1";
 
+
+const defaultHabits = [
+  {
+    id: "h1",
+    name: "Uống nước",
+    status: "Haven't done in 5 days",
+    streak: 0,
+    description: "Drink water regularly to keep hydrated.",
+    history: [], // array of ISO strings
+  },
+  {
+    id: "h2",
+    name: "Meditate",
+    status: "4-day streak",
+    streak: 4,
+    description: "10 minutes meditation in the morning.",
+    history: [],
+  },
+  {
+    id: "h3",
+    name: "Jogging",
+    status: "Missed yesterday",
+    streak: 0,
+    description: "Run 3km every other day.",
+    history: [],
+  },
+];
+
 function loadHabits() {
   try {
     const raw = localStorage.getItem(LS_KEY);
