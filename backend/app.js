@@ -59,8 +59,8 @@ app.get('/api/health', (req, res) => {
   });
 });
 app.use('/api/auth', authRoutes);
-app.use('/api', authMiddleware, trackingRoutes);
-app.use('/api/knowledge', authMiddleware, knowledgeRoutes);
+app.use('/api/knowledge', knowledgeRoutes);
+app.use('/api', trackingRoutes);
 
 // ============================================
 // 404 Handler
