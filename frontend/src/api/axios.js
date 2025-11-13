@@ -14,20 +14,20 @@ const axiosInstance = axios.create({
 // ============================================
 // Token Management
 // ============================================
-// export const getToken = () => localStorage.getItem('auth_token');
-// export const setToken = (token) => localStorage.setItem('auth_token', token);
-// export const clearToken = () => localStorage.removeItem('auth_token');
+export const getToken = () => localStorage.getItem('auth_token');
+export const setToken = (token) => localStorage.setItem('auth_token', token);
+export const clearToken = () => localStorage.removeItem('auth_token');
 
 // ============================================
 // Request Interceptor - Add Auth Token
 // ============================================
-// axiosInstance.interceptors.request.use((config) => {
-//   const token = getToken();
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+axiosInstance.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 
 // ============================================
@@ -56,7 +56,7 @@ axiosInstance.interceptors.response.use(
   (error) => {
     // Handle 401 - redirect to login
     if (error.response?.status === 401) {
-      // clearToken();
+      clearToken();
       safeNavigate('/login');
     }
     

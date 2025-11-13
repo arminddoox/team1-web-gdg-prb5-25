@@ -58,9 +58,13 @@ app.get('/api/health', (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+// Public routes
 app.use('/api/auth', authRoutes);
-app.use('/api/knowledge', knowledgeRoutes);
-app.use('/api', trackingRoutes);
+
+// Protected routes
+app.use('/api/knowledge', authMiddleware, knowledgeRoutes);
+app.use('/api', authMiddleware, trackingRoutes);
 
 // ============================================
 // 404 Handler

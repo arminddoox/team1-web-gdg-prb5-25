@@ -1,32 +1,19 @@
 // frontend/src/pages/SettingsPage.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import "../styles/App.css";
 
 export default function SettingsPage() {
-  const navigate = useNavigate();
   const auth = useAuth();
   const [busy, setBusy] = useState(false);
 
   const handleSignOut = async () => {
+    if (busy) return; // prevent double click
+    setBusy(true);
     try {
-      setBusy(true);
-      // Prefer auth.logout if provided by your hook
-      if (auth && typeof auth.logout === "function") {
-        await auth.logout();
-        // auth.logout() may redirect itself; guard fallback below
-        return;
-      }
-
-      // Fallback: clear token & redirect
-      localStorage.removeItem("auth_token");
-      navigate("/login", { replace: true });
-    } catch (err) {
-      console.error("Sign out failed", err);
-      // still redirect
-      localStorage.removeItem("auth_token");
-      navigate("/login", { replace: true });
+      await auth.logout();
+    } catch (error) {
+      console.error("Sign out failed", error);
     } finally {
       setBusy(false);
     }

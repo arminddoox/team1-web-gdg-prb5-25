@@ -6,12 +6,10 @@ import NewHabitButton from "../components/NewHabitButton";
 
 /* Figma asset URLs (hotlinked) */
 const imgOriginalImage1 = "https://www.figma.com/api/mcp/asset/9211e221-c4e9-4c55-892c-65149d64db1e";
-const imgIcon = "https://www.figma.com/api/mcp/asset/e9fc5d13-9228-437d-be6d-7a79725d3268";
 const imgIcon1 = "https://www.figma.com/api/mcp/asset/49732381-020e-4bab-81e5-0aa9689f9ace";
 const imgOriginalImage = "https://www.figma.com/api/mcp/asset/785ef7fd-d651-4210-9f13-1be849dc0b41";
 const img = "https://www.figma.com/api/mcp/asset/2d8cc7a1-51af-458b-93bf-2198890b0f20";
 const img1 = "https://www.figma.com/api/mcp/asset/f5ac86df-f14a-482b-b8f1-fad6e3d88468";
-const plusIcon = imgIcon;
 
 /* Small presentational subcomponents from the extractor (kept to reuse images) */
 function IconHome() {
@@ -114,8 +112,8 @@ function loadHabits() {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return defaultHabits;
     return JSON.parse(raw);
-  } catch (e) {
-    console.error("Failed load habits", e);
+  } catch (event) {
+    console.error("Failed load habits", event);
     return defaultHabits;
   }
 }

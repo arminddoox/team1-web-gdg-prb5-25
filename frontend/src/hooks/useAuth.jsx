@@ -1,8 +1,7 @@
 // frontend/src/hooks/useAuth.jsx
 import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { authApi } from "../api/authApi";
-import { api /*, getToken, clearToken*/ } from "../api/axios";
-import { useNavigate } from "react-router-dom";
+import { getToken, clearToken } from "../api/axios";
 
 /**
  * AuthContext + Provider + useAuth hook
@@ -14,35 +13,62 @@ import { useNavigate } from "react-router-dom";
  * This hook:
  *  - loads profile on mount if token exists
  *  - provides user, loading, error and auth methods
+ *
+ * Hoạt động tốt dù BE chưa có /users/profile
  */
+
+// 👉 Hàm decode payload từ JWT
+function decodeJwtPayload(token) {
+  try {
+    const payload = token.split(".")[1];
+    const b64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = b64.padEnd(b64.length + (4 - (b64.length % 4)) % 4, "=");
+    const json = atob(padded);
+    return JSON.parse(json);
+  } catch (error) {
+    return null;
+  }
+}
 
 // -- internal provider hook
 function useProvideAuth() {
-  const navigate = useNavigate();
   const [user, setUser] = useState(null); // current user object
-  // const [loading, setLoading] = useState(true); // initial loading (check token)
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // initial loading (check token)
   const [error, setError] = useState(null);
 
-  // fetch profile if token exists
+  /**
+   * ✅ loadProfile:
+   * Nếu có token -> decode để lấy userId.
+   * Nếu BE chưa có /users/profile thì vẫn giữ login state dựa vào token.
+   */
   const loadProfile = useCallback(async () => {
-    // setLoading(true);
-    // setError(null);
+    setLoading(true);
+    setError(null);
     try {
-      // const token = getToken();
-      // if (!token) {
-      //   setUser(null);
-      //   return;
-      // }
-      // // call your API to get profile (expects /users/profile or similar)
-      // // using `api.get('/users/profile')` will auto-unwrap response per axios.js
+      const token = getToken();
+      if (!token) {
+        setUser(null);
+        return;
+      }
+
+      // // nếu BE có /users/profile -> bạn có thể bật lại dòng dưới
       // const profile = await api.get("/users/profile");
       // setUser(profile);
-    } catch (err) {
-      // // token invalid, clear
-      // clearToken();
-      // setUser(null);
-      // if (import.meta.env.DEV) console.error("Failed to fetch profile:", err);
+
+      // decode token để lấy id (tạm thời thay cho /profile)
+      const decoded = decodeJwtPayload(token);
+      if (decoded?.id) {
+        setUser({ _id: decoded.id });
+      } else {
+        // token hỏng
+        clearToken();
+        setUser(null);
+      }
+    } catch (error) {
+      clearToken();
+      setUser(null);
+      if (import.meta.env.DEV) 
+        console.error("Failed to fetch profile:", error);
     } finally {
       setLoading(false);
     }
@@ -61,22 +87,23 @@ function useProvideAuth() {
       // authApi stores token already via setToken
       // server may return { user, token } or { token, user: {...} }
 
-//cần đọc lại
-
       if (data?.user) {
         setUser(data.user);
       } else {
-        try {
-          const profile = await api.get("/users/profile");
-          setUser(profile);
-        } catch (err) { /* ignore */ }
+        // try {
+        //   const profile = await api.get("/users/profile");
+        //   setUser(profile);
+        // } catch (error) { /* ignore */ }
+        const token = getToken();
+        const decoded = decodeJwtPayload(token);
+        if (decoded?.id) setUser({ _id: decoded.id });
       }
       setLoading(false);
       return data;
-    } catch (err) {
+    } catch (error) {
       setLoading(false);
-      setError(err);
-      throw err;
+      setError(error);
+      throw error;
     }
   };
 
@@ -89,29 +116,35 @@ function useProvideAuth() {
       if (data?.user) {
         setUser(data.user);
       } else {
-        try {
-          const profile = await api.get("/users/profile");
-          setUser(profile);
-        } catch (err) { /* ignore */ }
+        // try {
+        //   const profile = await api.get("/users/profile");
+        //   setUser(profile);
+        // } catch (error) { /* ignore */ }
+        const token = getToken();
+        const decoded = decodeJwtPayload(token);
+        if (decoded?.id) setUser({ _id: decoded.id });
       }
       setLoading(false);
       return data;
-    } catch (err) {
+    } catch (error) {
       setLoading(false);
-      setError(err);
-      throw err;
+      setError(error);
+      throw error;
     }
   };
 
   // logout
-  const logout = () => {
-    authApi.logout();
-    setUser(null);
-    setLoading(false);
-    // navigate to login (authApi.logout already redirects as safeguard)
+  const logout = async () => {
+    setLoading(true);
     try {
-      navigate("/login");
-    } catch (err) { /* ignore */ }
+      await authApi.logout(); // await so server revoke can run if implemented
+    } catch (error) {
+      if (import.meta.env.DEV) console.warn("logout error:", error);
+    } finally {
+      clearToken();
+      setUser(null);
+      setLoading(false);
+    }
   };
 
   return {

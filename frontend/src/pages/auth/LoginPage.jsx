@@ -1,11 +1,10 @@
 // frontend/src/pages/auth/LoginPage.jsx
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import "../../styles/App.css";
 
 export default function LoginPage() {
-  const navigate = useNavigate();
   const auth = useAuth();
 
   const [email, setEmail] = useState("");
@@ -13,15 +12,15 @@ export default function LoginPage() {
   const [busy, setBusy] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    if (busy) return; // prevent double click
+    event.preventDefault();
     setBusy(true);
     setErrMsg("");
     try {
       await auth.login({ email, password });
-      navigate("/home");
-    } catch (err) {
-      setErrMsg(err?.response?.data?.message || err.message || "Login failed");
+    } catch (error) {
+      setErrMsg(error?.response?.data?.message || error.message || "Login failed");
     } finally {
       setBusy(false);
     }
@@ -46,7 +45,7 @@ export default function LoginPage() {
                 className="input"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(event) => setEmail(event.target.value)}
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
@@ -61,7 +60,7 @@ export default function LoginPage() {
                 className="input"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(event) => setPassword(event.target.value)}
                 required
                 autoComplete="current-password"
                 placeholder="Enter your password"

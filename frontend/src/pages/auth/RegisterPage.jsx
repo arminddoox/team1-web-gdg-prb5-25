@@ -1,27 +1,26 @@
 // frontend/src/pages/auth/RegisterPage.jsx
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import "../../styles/App.css"; // ensure global styles loaded
 
 export default function RegisterPage() {
-  const navigate = useNavigate();
   const auth = useAuth();
 
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    if (busy) return; // prevent double click
+    event.preventDefault();
     setBusy(true);
     setErrMsg("");
     try {
       // Use actual password if your backend needs it;
       await auth.register({ email, password: "changeme" });
-      navigate("/home");
-    } catch (err) {
-      setErrMsg(err?.response?.data?.message || err.message || "Registration failed");
+    } catch (error) {
+      setErrMsg(error?.response?.data?.message || error.message || "Registration failed");
     } finally {
       setBusy(false);
     }
@@ -45,7 +44,7 @@ export default function RegisterPage() {
                 className="input"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(event) => setEmail(event.target.value)}
                 required
                 autoComplete="email"
                 placeholder="you@example.com"

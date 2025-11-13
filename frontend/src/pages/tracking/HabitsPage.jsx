@@ -48,8 +48,8 @@ function loadHabits() {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return defaultHabits;
     return JSON.parse(raw);
-  } catch (e) {
-    console.error("Failed load habits", e);
+  } catch (event) {
+    console.error("Failed load habits", event);
     return defaultHabits;
   }
 }
@@ -148,7 +148,7 @@ export default function HabitsPage() {
                   <input
                     className="input"
                     value={query}
-                    onChange={(e) => setQuery(e.target.value)}
+                    onChange={(event) => setQuery(event.target.value)}
                     placeholder="Search for habits..."
                     aria-label="Search habits"
                   />

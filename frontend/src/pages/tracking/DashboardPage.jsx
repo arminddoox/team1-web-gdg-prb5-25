@@ -50,8 +50,8 @@ function loadHabits() {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return defaultHabits;
     return JSON.parse(raw);
-  } catch (e) {
-    console.error("Failed load habits", e);
+  } catch (event) {
+    console.error("Failed load habits", event);
     return defaultHabits;
   }
 }

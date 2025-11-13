@@ -83,14 +83,14 @@ export default function HabitListItem({
       onClick={onSelect}
       role="row"
       tabIndex={0}
-      onKeyDown={(e) => { if (e.key === "Enter") onSelect?.(); }}
+      onKeyDown={(event) => { if (event.key === "Enter") onSelect?.(); }}
     >
       {/* Checkbox / quick mark */}
       <div className="start-row">
       <div className="col col-checkbox">
         <button
           className={`icon-btn ${todayDone ? "active" : ""}`}
-          onClick={(e) => { e.stopPropagation(); onQuickMark?.(habit.id); }}
+          onClick={(event) => { event.stopPropagation(); onQuickMark?.(habit.id); }}
           title={todayDone ? "Already done today" : "Mark done today"}
           aria-pressed={todayDone}
         >
@@ -116,7 +116,7 @@ export default function HabitListItem({
       <div className="col col-last">{habit.history?.length ? new Date(habit.history[habit.history.length - 1]).toLocaleDateString() : "-"}</div>
         </div>
       {/* Actions */}
-      <div className="col col-actions" onClick={(e) => e.stopPropagation()}>
+      <div className="col col-actions" onClick={(event) => event.stopPropagation()}>
         <button className="icon-btn no-border" title="Open calendar">
           <Icon.Calendar />
         </button>

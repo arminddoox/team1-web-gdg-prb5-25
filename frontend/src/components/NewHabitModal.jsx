@@ -12,8 +12,8 @@ export default function NewHabitModal({ visible, onClose, onCreate }) {
 
   if (!visible) return null;
 
-  const submit = (e) => {
-    e.preventDefault();
+  const submit = (event) => {
+    event.preventDefault();
     if (!name.trim()) return;
     onCreate({ name: name.trim(), description: desc.trim(), emoji });
     setName("");
@@ -28,17 +28,17 @@ export default function NewHabitModal({ visible, onClose, onCreate }) {
         <form onSubmit={submit}>
           <label className="field">
             <div className="label">Name</div>
-            <input className="input" value={name} onChange={(e) => setName(e.target.value)} required />
+            <input className="input" value={name} onChange={(event) => setName(event.target.value)} required />
           </label>
 
           <label className="field">
             <div className="label">Emoji</div>
-            <input className="input" value={emoji} onChange={(e) => setEmoji(e.target.value)} />
+            <input className="input" value={emoji} onChange={(event) => setEmoji(event.target.value)} />
           </label>
 
           <label className="field">
             <div className="label">Description</div>
-            <textarea className="input" value={desc} onChange={(e) => setDesc(e.target.value)} />
+            <textarea className="input" value={desc} onChange={(event) => setDesc(event.target.value)} />
           </label>
 
           <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>

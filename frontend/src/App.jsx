@@ -16,23 +16,21 @@ import NotFoundPage from "./pages/NotFoundPage";
 // Components
 import Sidebar from "./components/Sidebar";
 
-/* ===== NOTE =====
-  For now we keep a top-level flag so both RouteGuard and the root redirect can read it.
-  Replace with your real auth check (context/hook) later.
-*/
-const isAuthenticated = true; // TODO: replace with real auth logic
+// Hooks
+import useAuth from './hooks/useAuth';
 
 // ========== RouteGuard ==========
 const RouteGuard = ({ type, children }) => {
-  const isAuthenticated = true; // TODO: replace with real auth logic
+  const { user, loading } = useAuth();
+  if (loading) return null; 
+  const authenticated = !!user;
 
-  if (type === "protected" && !isAuthenticated) {
-    // return <Navigate to="/login" replace />;
+  if (type === "public" && authenticated) {
+    return <Navigate to="/home" replace />;
   }
-  if (type === "public" && isAuthenticated) {
-    // return <Navigate to="/dashboard" replace />;
+  if (type === "protected" && !authenticated) {
+    return <Navigate to="/login" replace />;
   }
-
   return children;
 };
 
@@ -58,7 +56,9 @@ export default function App() {
         <Route
           path="/"
           element={
-            isAuthenticated ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />
+            <RouteGuard type="protected">
+              <Navigate to="/home" replace />
+            </RouteGuard>
           }
         />
 
