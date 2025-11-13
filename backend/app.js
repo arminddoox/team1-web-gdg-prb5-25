@@ -42,7 +42,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ============================================
-// Custom Middlewares
+// Logging Middleware
 // ============================================
 if (configs.NODE_ENV === 'development') {
   app.use(loggerMiddleware);

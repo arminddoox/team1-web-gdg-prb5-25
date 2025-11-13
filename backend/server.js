@@ -62,29 +62,26 @@ const startServer = async () => {
     const gracefulShutdown = async (signal) => {
       console.log(`\n⚠️  ${signal} received. Shutting down gracefully...`);
 
-      // Close server first (stop accepting new connections)
       server.close(async () => {
         console.log('✅ HTTP server closed');
-
         try {
-          // Close database connection
           await mongoose.connection.close(false);
           console.log('✅ MongoDB connection closed');
-          process.kill(process.pid, 'SIGTERM');
+          process.exit(0);
         } catch (error) {
           console.error('❌ Error during shutdown:', error);
-          process.kill(process.pid, 'SIGTERM');
+          process.exit(1);
         }
       });
 
-      // Force shutdown after 5 seconds (reduced from 10)
+      // Force shutdown after 5 seconds
       setTimeout(() => {
         console.error('⚠️  Could not close connections in time, forcefully shutting down');
-        process.kill(process.pid, 'SIGTERM');
+        process.exit(1);
       }, 5000).unref();
     };
 
-    // Handle shutdown signals (once only to prevent duplicate prompts)
+    // Handle shutdown signals
     process.once('SIGTERM', () => gracefulShutdown('SIGTERM'));
     process.once('SIGINT', () => gracefulShutdown('SIGINT'));
 
@@ -96,7 +93,7 @@ const startServer = async () => {
       process.kill(process.pid, 'SIGUSR2');
     });
 
-    // Handle uncaught errors (only in production)
+    // Handle uncaught errors (production)
     if (configs.NODE_ENV === 'production') {
       process.once('uncaughtException', (error) => {
         console.error('❌ Uncaught Exception:', error);
@@ -115,5 +112,7 @@ const startServer = async () => {
   }
 };
 
+// ============================================
 // Start the application
+// ============================================
 startServer();

@@ -1,51 +1,46 @@
-import {
-    getAllHabitsService,
-    createHabitService,
-    updateHabitService,
-    deledeHabitService,
-    markHabitCompleteService,
-    getTrackingSummaryService
-} from "../services/trackingService.js";
+import * as trackingService from '../services/trackingService.js';
+
+// Helper to get userId from auth middleware or fallback to testId
+const getUserId = (req) => req.user?._id || req.body.userId || 'testUserId';
 
 // Get all habits for a user
 export const getAllHabits = async (req, res) => {
-    const userId = req.body.userId || "testUserId"; // placeholder
-    const result = await getAllHabitsService(userId);
-    res.json(result);
+  const userId = getUserId(req);
+  const habits = await trackingService.getUserHabits(userId);
+  res.json({ status: 'success', habits });
 };
 
 // Create a new habit
 export const createHabit = async (req, res) => {
-    const userId = req.body.userId || "testUserId";
-    const result = await createHabitService(userId, req.body);
-    res.json(result);
+  const userId = getUserId(req);
+  const habit = await trackingService.createHabit(userId, req.body);
+  res.json({ status: 'success', habit });
 };
 
 // Update a habit
 export const updateHabit = async (req, res) => {
-    const habitId = req.params.id;
-    const result = await updateHabitService(habitId, req.body);
-    res.json(result);
+  const userId = getUserId(req);
+  const habit = await trackingService.updateHabit(userId, req.params.id, req.body);
+  res.json({ status: 'success', habit });
 };
 
 // Delete a habit
 export const deleteHabit = async (req, res) => {
-    const habitId = req.params.id;
-    const result = await deledeHabitService(habitId);
-    res.json(result);
+  const userId = getUserId(req);
+  const result = await trackingService.deleteHabit(userId, req.params.id);
+  res.json({ status: 'success', ...result });
 };
 
 // Mark habit complete today
 export const markHabitComplete = async (req, res) => {
-    const habitId = req.params.id;
-    const userId = req.body.userId || "testUserId";
-    const result = await markHabitCompleteService(habitId, userId);
-    res.json(result);
+  const userId = getUserId(req);
+  const habit = await trackingService.trackHabitCompletion(userId, req.params.id);
+  res.json({ status: 'success', habit });
 };
 
 // Get tracking summary (streaks, completion rate)
 export const getTrackingSummary = async (req, res) => {
-    const userId = req.body.userId || "testUserId";
-    const result = await getTrackingSummaryService(userId);
-    res.json(result);
+  const userId = getUserId(req);
+  const summary = await trackingService.getTrackingSummaryService(userId);
+  res.json({ status: 'success', summary });
 };
