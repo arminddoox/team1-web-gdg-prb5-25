@@ -72,7 +72,7 @@ export default function RegisterPage() {
 
             <div className="actions column">
               <button type="submit" className="btn primary large" disabled={busy}>
-                {busy ? "Signing in..." : "Continue with email"}
+                {busy ? "Creating..." : "Continue with email"}
               </button>
 
               <div className="divider" />
