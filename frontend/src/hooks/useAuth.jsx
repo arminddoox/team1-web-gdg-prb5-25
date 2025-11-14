@@ -13,11 +13,12 @@ import { getToken, clearToken } from "../api/axios";
  * This hook:
  *  - loads profile on mount if token exists
  *  - provides user, loading, error and auth methods
+ *  - provides user (with email, username derived from email), loading, error and auth methods
  *
  * Hoạt động tốt dù BE chưa có /users/profile
  */
 
-// 👉 Hàm decode payload từ JWT
+// Hàm decode payload từ JWT
 function decodeJwtPayload(token) {
   try {
     const payload = token.split(".")[1];
@@ -30,6 +31,20 @@ function decodeJwtPayload(token) {
   }
 }
 
+// Helper: Tạo user object từ decoded JWT payload
+function createUserFromToken(decoded) {
+  if (!decoded?.id) return null;
+  
+  const email = decoded.email || null;
+  const username = email ? email.split('@')[0] : 'User';
+  
+  return {
+    _id: decoded.id,
+    email: email,
+    username: username,
+  };
+}
+
 // -- internal provider hook
 function useProvideAuth() {
   const [user, setUser] = useState(null); // current user object
@@ -38,7 +53,7 @@ function useProvideAuth() {
 
   /**
    * ✅ loadProfile:
-   * Nếu có token -> decode để lấy userId.
+   * Nếu có token -> decode để lấy userId và email.
    * Nếu BE chưa có /users/profile thì vẫn giữ login state dựa vào token.
    */
   const loadProfile = useCallback(async () => {
@@ -57,8 +72,10 @@ function useProvideAuth() {
 
       // decode token để lấy id (tạm thời thay cho /profile)
       const decoded = decodeJwtPayload(token);
-      if (decoded?.id) {
-        setUser({ _id: decoded.id });
+      const userObj = createUserFromToken(decoded);
+      
+      if (userObj) {
+        setUser(userObj);
       } else {
         // token hỏng
         clearToken();
@@ -88,7 +105,9 @@ function useProvideAuth() {
       // server may return { user, token } or { token, user: {...} }
 
       if (data?.user) {
-        setUser(data.user);
+        const email = data.user.email || credentials.email;
+        const username = email ? email.split('@')[0] : 'User';
+        setUser({ ...data.user, email, username });
       } else {
         // try {
         //   const profile = await api.get("/users/profile");
@@ -96,7 +115,8 @@ function useProvideAuth() {
         // } catch (error) { /* ignore */ }
         const token = getToken();
         const decoded = decodeJwtPayload(token);
-        if (decoded?.id) setUser({ _id: decoded.id });
+        const userObj = createUserFromToken(decoded);
+        if (userObj) setUser(userObj);
       }
       setLoading(false);
       return data;
@@ -114,7 +134,9 @@ function useProvideAuth() {
     try {
       const data = await authApi.register(userData);
       if (data?.user) {
-        setUser(data.user);
+        const email = data.user.email || userData.email;
+        const username = email ? email.split('@')[0] : 'User';
+        setUser({ ...data.user, email, username });
       } else {
         // try {
         //   const profile = await api.get("/users/profile");
@@ -122,7 +144,8 @@ function useProvideAuth() {
         // } catch (error) { /* ignore */ }
         const token = getToken();
         const decoded = decodeJwtPayload(token);
-        if (decoded?.id) setUser({ _id: decoded.id });
+        const userObj = createUserFromToken(decoded);
+        if (userObj) setUser(userObj);
       }
       setLoading(false);
       return data;

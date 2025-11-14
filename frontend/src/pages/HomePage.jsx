@@ -4,6 +4,7 @@ import NewHabitModal from "../components/NewHabitModal";
 import NewHabitButton from "../components/NewHabitButton";
 import trackingApi from "../api/trackingApi";
 import { mapHabitsToFrontend, frontendToBackend } from "../utils/habitMapper";
+import useAuth from "../hooks/useAuth";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /* Figma asset URLs (hotlinked) */
@@ -118,6 +119,10 @@ export default function HomePage() {
   const [habits, setHabits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const { user } = useAuth();
+
+  // Get username from user object (already contains derived username)
+  const username = user?.username || "Username";
 
   // Load habits from backend
   const loadHabits = async () => {
@@ -180,7 +185,7 @@ export default function HomePage() {
 
       {/* Greeting */}
       <div className="hb-greeting-wrap">
-        <h1 className="hb-greeting">Good evening, username</h1>
+        <h1 className="hb-greeting">Good evening, {username}</h1>
       </div>
 
       {/* Main container */}
