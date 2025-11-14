@@ -39,7 +39,9 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="auth-form" noValidate>
             <label className="field">
-              <div className="label small"><span className="icon">✉️</span> Email</div>
+              <div className="label small">
+                Email
+              </div>
               <input
                 className="input"
                 type="email"
@@ -51,17 +53,36 @@ export default function RegisterPage() {
               />
             </label>
 
+            <label className="field">
+              <div className="label small">
+                Password
+              </div>
+              <input
+                className="input"
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                autoComplete="current-password"
+                placeholder="Enter your password"
+              />
+            </label>
+
             {errMsg && <div className="error">{errMsg}</div>}
 
             <div className="actions column">
               <button type="submit" className="btn primary large" disabled={busy}>
-                {busy ? "Creating..." : "Continue with email"}
+                {busy ? "Signing in..." : "Continue with email"}
               </button>
 
               <div className="divider" />
 
-              <button type="button" className="btn provider">Continue with Google</button>
-              <button type="button" className="btn provider">Continue with Phone Number</button>
+              <button type="button" className="btn provider">
+                Continue with Google
+              </button>
+              <button type="button" className="btn provider">
+                Continue with Phone Number
+              </button>
             </div>
           </form>
 
