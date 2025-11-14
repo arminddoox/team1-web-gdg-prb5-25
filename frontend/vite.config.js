@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
       allowedHosts: [
         'ba2f5fde5e0e.ngrok-free.app', // host ngrok hiện tại
         '*.ngrok-free.app',            // wildcard phòng hờ
-        'animated-guide-7vwx5qxj99wqf475-5173.app.github.dev' // GitHub Codespaces
+        '*.app.github.dev'             // GitHub Codespaces
       ],
       proxy: {
         '/api': {
