@@ -20,21 +20,21 @@ export const createHabit = async (req, res) => {
 // Update a habit
 export const updateHabit = async (req, res) => {
   const userId = getUserId(req);
-  const habit = await trackingService.updateHabit(userId, req.params.id, req.body);
+  const habit = await trackingService.updateHabit(userId, req.params.habitId, req.body);
   res.json({ status: 'success', habit });
 };
 
 // Delete a habit
 export const deleteHabit = async (req, res) => {
   const userId = getUserId(req);
-  const result = await trackingService.deleteHabit(userId, req.params.id);
+  const result = await trackingService.deleteHabit(userId, req.params.habitId);
   res.json({ status: 'success', ...result });
 };
 
 // Mark habit complete today
 export const markHabitComplete = async (req, res) => {
   const userId = getUserId(req);
-  const habit = await trackingService.trackHabitCompletion(userId, req.params.id);
+  const habit = await trackingService.trackHabitCompletion(userId, req.params.habitId);
   res.json({ status: 'success', habit });
 };
 

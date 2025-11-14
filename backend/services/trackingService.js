@@ -5,7 +5,7 @@ import Tracking from '../models/Tracking.js';
 // ============================
 
 // Get all habits for a user
-export const getAllHabitsService = async (userId) => {
+export const getUserHabits = async (userId) => {
   try {
     let tracking = await Tracking.findOne({ userId });
     if (!tracking) {
@@ -14,12 +14,12 @@ export const getAllHabitsService = async (userId) => {
     return tracking.habits;
   } catch (error) {
     // Placeholder fallback
-    return { message: "getAllHabitsService - placeholder", userId, habits: [] };
+    return { message: "getUserHabits - placeholder", userId, habits: [] };
   }
 };
 
 // Create a new habit
-export const createHabitService = async (userId, habitData) => {
+export const createHabit = async (userId, habitData) => {
   try {
     const tracking = await Tracking.findOne({ userId });
     const newHabit = { ...habitData, logs: [], streak: { current: 0, longest: 0 } };
@@ -27,12 +27,12 @@ export const createHabitService = async (userId, habitData) => {
     await tracking.save();
     return newHabit;
   } catch (error) {
-    return { message: "createHabitService - habit created (placeholder)", habit: habitData };
+    return { message: "createHabit - habit created (placeholder)", habit: habitData };
   }
 };
 
 // Update a habit
-export const updateHabitService = async (userId, habitId, updates) => {
+export const updateHabit = async (userId, habitId, updates) => {
   try {
     const tracking = await Tracking.findOne({ userId });
     const habit = tracking.habits.id(habitId);
@@ -41,12 +41,12 @@ export const updateHabitService = async (userId, habitId, updates) => {
     await tracking.save();
     return habit;
   } catch (error) {
-    return { message: "updateHabitService - habit updated (placeholder)", habitId, habit: updates };
+    return { message: "updateHabit - habit updated (placeholder)", habitId, habit: updates };
   }
 };
 
 // Delete a habit
-export const deleteHabitService = async (userId, habitId) => {
+export const deleteHabit = async (userId, habitId) => {
   try {
     const tracking = await Tracking.findOne({ userId });
     const habit = tracking.habits.id(habitId);
@@ -55,12 +55,12 @@ export const deleteHabitService = async (userId, habitId) => {
     await tracking.save();
     return { message: 'Habit deleted' };
   } catch (error) {
-    return { message: "deleteHabitService - habit deleted (placeholder)", habitId };
+    return { message: "deleteHabit - habit deleted (placeholder)", habitId };
   }
 };
 
 // Mark habit complete for today
-export const markHabitCompleteService = async (userId, habitId) => {
+export const markHabitComplete = async (userId, habitId) => {
   try {
     const tracking = await Tracking.findOne({ userId });
     const habit = tracking.habits.id(habitId);
@@ -73,12 +73,12 @@ export const markHabitCompleteService = async (userId, habitId) => {
     await tracking.save();
     return habit;
   } catch (error) {
-    return { message: "markHabitCompleteService - placeholder", habitId, userId };
+    return { message: "markHabitComplete - placeholder", habitId, userId };
   }
 };
 
 // Get tracking summary (streaks, completion rate)
-export const getTrackingSummaryService = async (userId) => {
+export const getTrackingSummary = async (userId) => {
   try {
     const tracking = await Tracking.findOne({ userId });
     if (!tracking) return {
@@ -95,7 +95,7 @@ export const getTrackingSummaryService = async (userId) => {
     return { totalHabits, activeStreaks, completionRate };
   } catch (error) {
     return {
-      message: "getTrackingSummaryService - placeholder",
+      message: "getTrackingSummary - placeholder",
       userId,
       summary: { totalHabits: 0, activeStreaks: 0, completionRate: 0 },
     };

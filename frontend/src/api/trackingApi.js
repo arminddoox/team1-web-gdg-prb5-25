@@ -6,8 +6,8 @@ import { api } from './axios';
  * Routes (BE):
  *   GET    /habits           → getAllHabits
  *   POST   /habits           → createHabit
- *   PUT    /habits/:id       → updateHabit
- *   DELETE /habits/:id       → deleteHabit
+ *   PUT    /habits/:habitId  → updateHabit
+ *   DELETE /habits/:habitId  → deleteHabit
  *   POST   /track/:habitId   → markHabitComplete
  *   GET    /track            → getTrackingSummary
  *
@@ -21,11 +21,11 @@ export const trackingApi = {
   // Tạo habit mới (body: { title, description, frequency, ... })
   createHabit: (habitData) => api.post("/habits", habitData),
 
-  // Cập nhật habit theo id (body: partial updates)
-  updateHabit: (id, updates) => api.put(`/habits/${id}`, updates),
+  // Cập nhật habit theo habitId (body: partial updates)
+  updateHabit: (habitId, updates) => api.put(`/habits/${habitId}`, updates),
 
-  // Xoá habit theo id
-  deleteHabit: (id) => api.delete(`/habits/${id}`),
+  // Xoá habit theo habitId
+  deleteHabit: (habitId) => api.delete(`/habits/${habitId}`),
 
   // Đánh dấu hoàn thành habit (track) theo habitId
   markHabitComplete: (habitId) => api.post(`/track/${habitId}`),

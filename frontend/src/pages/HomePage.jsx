@@ -1,17 +1,17 @@
 // frontend/src/pages/HomePage.jsx
-import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NewHabitModal from "../components/NewHabitModal";
 import NewHabitButton from "../components/NewHabitButton";
+import trackingApi from "../api/trackingApi";
+import { mapHabitsToFrontend, frontendToBackend } from "../utils/habitMapper";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /* Figma asset URLs (hotlinked) */
 const imgOriginalImage1 = "https://www.figma.com/api/mcp/asset/9211e221-c4e9-4c55-892c-65149d64db1e";
 const imgIcon1 = "https://www.figma.com/api/mcp/asset/49732381-020e-4bab-81e5-0aa9689f9ace";
 const imgOriginalImage = "https://www.figma.com/api/mcp/asset/785ef7fd-d651-4210-9f13-1be849dc0b41";
-const img = "https://www.figma.com/api/mcp/asset/2d8cc7a1-51af-458b-93bf-2198890b0f20";
-const img1 = "https://www.figma.com/api/mcp/asset/f5ac86df-f14a-482b-b8f1-fad6e3d88468";
 
-/* Small presentational subcomponents from the extractor (kept to reuse images) */
+/* Small presentational subcomponents */
 function IconHome() {
   return (
     <div className="hb-icon-home">
@@ -20,9 +20,9 @@ function IconHome() {
   );
 }
 
-function SmallCard({ title, emoji, desc = "description / Not done yet" }) {
+function SmallCard({ title, emoji, desc = "description / Not done yet", onClick }) {
   return (
-    <div className="hb-card">
+    <div className="hb-card" onClick={onClick} style={{ cursor: onClick ? "pointer" : "default" }}>
       <div className="hb-card-head">
         <div className="hb-card-title">{title}</div>
         <div className="hb-card-emoji">{emoji}</div>
@@ -32,13 +32,13 @@ function SmallCard({ title, emoji, desc = "description / Not done yet" }) {
   );
 }
 
-function ArticleCard({ title = "Nhan đề bài", excerpt }) {
+function ArticleCard({ title = "Nhận đề bài", excerpt }) {
   return (
     <article className="hb-article-card">
       <h3 className="hb-article-title">{title}</h3>
       <p className="hb-article-excerpt">
         {excerpt ||
-          "Một mẩu ngắn nội dung của bài viết vào đay, tất cả đống này tĩnh hết nên ko cần kết nối gì cả."}
+          "Một mẫu ngắn nội dung của bài viết vào đây, tất cả đồng này tĩnh hết nên ko cần kết nối gì cả."}
       </p>
 
       <div className="hb-article-image-mask" style={{ maskImage: `url('${imgOriginalImage}')` }}>
@@ -49,18 +49,45 @@ function ArticleCard({ title = "Nhan đề bài", excerpt }) {
 }
 
 function Calendar() {
-  // simplified calendar rendering — keeps the Figma look & the active day
-  const days = Array.from({ length: 31 }).map((_, i) => i + 1);
+  const today = new Date();
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const firstDayIndex = new Date(year, month, 1).getDay();
+  const days = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+
+  const handlePrev = () => {
+    setCurrentDate(new Date(year, month - 1, 1));
+  };
+
+  const handleNext = () => {
+    setCurrentDate(new Date(year, month + 1, 1));
+  };
+
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const isToday = (day) =>
+    day === today.getDate() &&
+    month === today.getMonth() &&
+    year === today.getFullYear();
+
   return (
     <div className="hb-calendar">
       <div className="hb-calendar-header">
-        <img className="hb-cal-icon" src={img} alt="left" />
-        <div className="hb-cal-month">September 2021</div>
-        <img className="hb-cal-icon" src={img1} alt="right" />
+        <ChevronLeft onClick={handlePrev} style={{ cursor: "pointer" }}/>
+        <div className="hb-cal-month">
+          {monthNames[month]} {year}
+        </div>
+        <ChevronRight onClick={handleNext} style={{ cursor: "pointer" }}/>
       </div>
 
       <div className="hb-cal-weekdays">
-        {["SAN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((d) => (
+        {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"].map((d) => (
           <div key={d} className="hb-cal-weekday">
             {d}
           </div>
@@ -68,9 +95,17 @@ function Calendar() {
       </div>
 
       <div className="hb-cal-grid">
+        {Array.from({ length: firstDayIndex }).map((_, i) => (
+          <div key={`empty-${i}`} className="hb-cal-day empty"></div>
+        ))}
+
         {days.map((day) => (
           <div key={day} className="hb-cal-day">
-            {day === 19 ? <div className="hb-cal-day-active">{day}</div> : <span>{day}</span>}
+            {isToday(day) ? (
+              <div className="hb-cal-day-active">{day}</div>
+            ) : (
+              <span>{day}</span>
+            )}
           </div>
         ))}
       </div>
@@ -78,58 +113,63 @@ function Calendar() {
   );
 }
 
-const LS_KEY = "habits_data_v1";
-
-const defaultHabits = [
-  {
-    id: "h1",
-    name: "Uống nước",
-    status: "Haven't done in 5 days",
-    streak: 0,
-    description: "Drink water regularly to keep hydrated.",
-    history: [], // array of ISO strings
-  },
-  {
-    id: "h2",
-    name: "Meditate",
-    status: "4-day streak",
-    streak: 4,
-    description: "10 minutes meditation in the morning.",
-    history: [],
-  },
-  {
-    id: "h3",
-    name: "Jogging",
-    status: "Missed yesterday",
-    streak: 0,
-    description: "Run 3km every other day.",
-    history: [],
-  },
-];
-
-function loadHabits() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return defaultHabits;
-    return JSON.parse(raw);
-  } catch (event) {
-    console.error("Failed load habits", event);
-    return defaultHabits;
-  }
-}
-
-/* Main HomePage component (no sidebar) */
+/* Main HomePage component - now with backend integration */
 export default function HomePage() {
-    const [habits, setHabits] = useState(() => loadHabits());
+  const [habits, setHabits] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
-    const [showModal, setShowModal] = useState(false);
-    const addHabit = (newHabit) => {
-        setHabits((prev) => {
-        const updated = [{ ...newHabit, id: `h_${Date.now()}`, history: [], streak: 0, status: "No activity yet" }, ...prev];
-        return updated;
-        });
-        setShowModal(false);
-    };
+  // Load habits from backend
+  const loadHabits = async () => {
+    try {
+      setLoading(true);
+      const response = await trackingApi.getAllHabits();
+      const backendHabits = response.habits || [];
+      const frontendHabits = mapHabitsToFrontend(backendHabits);
+      setHabits(frontendHabits);
+    } catch (err) {
+      console.error("Failed to load habits:", err);
+      // Keep empty array on error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadHabits();
+  }, []);
+
+  const addHabit = async (newHabit) => {
+    try {
+      const backendData = frontendToBackend(newHabit);
+      await trackingApi.createHabit(backendData);
+      
+      // Reload habits
+      await loadHabits();
+      setShowModal(false);
+    } catch (err) {
+      console.error("Failed to create habit:", err);
+      alert("Failed to create habit. Please try again.");
+    }
+  };
+
+  const markHabitComplete = async (habitId) => {
+    try {
+      await trackingApi.markHabitComplete(habitId);
+      // Reload to update UI
+      await loadHabits();
+    } catch (err) {
+      console.error("Failed to mark habit complete:", err);
+      alert("Failed to mark habit complete. Please try again.");
+    }
+  };
+
+  // Get today's incomplete habits for "To do" section
+  const todayYmd = new Date().toISOString().slice(0, 10);
+  const todoHabits = habits.filter(h => {
+    const hasToday = h.history?.some(d => d.slice(0, 10) === todayYmd);
+    return !hasToday; // Show habits not done today
+  }).slice(0, 6); // Limit to 6
 
   return (
     <div className="hb-root">
@@ -152,14 +192,25 @@ export default function HomePage() {
             <h2 className="hb-section-title">To do</h2>
           </div>
 
-          <div className="hb-cards-row">
-            <SmallCard title="Uống nước" emoji="💧" />
-            <SmallCard title="Một habit tên dàu" emoji="🍼" />
-            <SmallCard title="Dậy sớm" emoji="⏰" />
-            <SmallCard title="Học bài" emoji="🚨" />
-            <SmallCard title="Uống nước" emoji="💧" />
-            <SmallCard title="Uống nước" emoji="💧" />
-          </div>
+          {loading ? (
+            <div style={{ padding: 20, color: "#7a7a7a" }}>Loading habits...</div>
+          ) : todoHabits.length === 0 ? (
+            <div style={{ padding: 20, color: "#7a7a7a" }}>
+              All done for today! 🎉
+            </div>
+          ) : (
+            <div className="hb-cards-row">
+              {todoHabits.map((habit) => (
+                <SmallCard
+                  key={habit.id}
+                  title={habit.name}
+                  emoji={habit.emoji || "🎯"}
+                  desc={habit.description || "No description"}
+                  onClick={() => markHabitComplete(habit.id)}
+                />
+              ))}
+            </div>
+          )}
         </section>
 
         {/* Learn from Online articles */}
@@ -209,6 +260,7 @@ export default function HomePage() {
           </div>
         </section>
       </div>
+      
       <NewHabitButton onAdd={() => setShowModal(true)} />
       <NewHabitModal visible={showModal} onClose={() => setShowModal(false)} onCreate={addHabit} />
     </div>
