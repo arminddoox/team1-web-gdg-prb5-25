@@ -6,7 +6,7 @@ import {
     deleteHabit,
     markHabitComplete,
     getTrackingSummary,
-} from '../controllers/trackingController.js';
+} from '../controllers/tracking.controller.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
@@ -17,8 +17,8 @@ router.use(authMiddleware);
 // Habit CRUD
 router.get('/habits', getAllHabits);          // Fetch all habits
 router.post('/habits', createHabit);          // Create a new habit
-router.put('/habits/:id', updateHabit);       // Update habit
-router.delete('/habits/:id', deleteHabit);    // Delete habit
+router.put('/habits/:habitId', updateHabit);       // Update habit
+router.delete('/habits/:habitId', deleteHabit);    // Delete habit
 
 // Tracking
 router.post('/track/:habitId', markHabitComplete); // Mark habit as complete

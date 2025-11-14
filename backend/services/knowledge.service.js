@@ -1,4 +1,4 @@
-import Knowledge from '../models/Knowledge.js';
+import Knowledge from '../models/knowledge.model.js';
 
 // Flag for using placeholder (MVP/testing) or real DB functions
 const USE_PLACEHOLDER = false; // set true if you want to use placeholders

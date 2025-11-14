@@ -11,9 +11,9 @@ import { authMiddleware } from './middlewares/authMiddleware.js';
 import { validateBody } from './middlewares/validateMiddleware.js';
 
 // Routes would be imported here
-import authRoutes from './routes/authRoutes.js';
-import trackingRoutes from './routes/trackingRoutes.js';
-import knowledgeRoutes from './routes/knowledgeRoutes.js';
+import authRoutes from './routes/auth.routes.js';
+import trackingRoutes from './routes/tracking.routes.js';
+import knowledgeRoutes from './routes/knowledge.routes.js';
 
 const app = express();
 

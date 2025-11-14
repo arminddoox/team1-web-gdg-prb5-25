@@ -1,4 +1,4 @@
-import * as trackingService from '../services/trackingService.js';
+import * as trackingService from '../services/tracking.service.js';
 
 // Helper to get userId from auth middleware or fallback to testId
 const getUserId = (req) => req.user?._id || req.body.userId || 'testUserId';
@@ -20,21 +20,21 @@ export const createHabit = async (req, res) => {
 // Update a habit
 export const updateHabit = async (req, res) => {
   const userId = getUserId(req);
-  const habit = await trackingService.updateHabit(userId, req.params.id, req.body);
+  const habit = await trackingService.updateHabit(userId, req.params.habitId, req.body);
   res.json({ status: 'success', habit });
 };
 
 // Delete a habit
 export const deleteHabit = async (req, res) => {
   const userId = getUserId(req);
-  const result = await trackingService.deleteHabit(userId, req.params.id);
+  const result = await trackingService.deleteHabit(userId, req.params.habitId);
   res.json({ status: 'success', ...result });
 };
 
 // Mark habit complete today
 export const markHabitComplete = async (req, res) => {
   const userId = getUserId(req);
-  const habit = await trackingService.trackHabitCompletion(userId, req.params.id);
+  const habit = await trackingService.trackHabitCompletion(userId, req.params.habitId);
   res.json({ status: 'success', habit });
 };
 

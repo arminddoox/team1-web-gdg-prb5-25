@@ -3,75 +3,53 @@ import React, { useEffect, useMemo, useState } from "react";
 import HabitsList from "../../components/HabitsList";
 import HabitDetail from "../../components/HabitDetail";
 import NewHabitModal from "../../components/NewHabitModal.jsx";
+import trackingApi from "../../api/trackingApi";
+import { mapHabitsToFrontend, frontendToBackend } from "../../utils/habitMapper";
 import "../../styles/App.css";
 
-
 /**
- * HabitsPage
- * - Manages habits state (localStorage-backed)
+ * HabitsPage - Now integrated with backend API
+ * - Fetches habits from backend
  * - Provides search, selection, create, mark-as-done
  */
 
-const LS_KEY = "habits_data_v1";
-
-const nowISO = () => new Date().toISOString();
-
-const defaultHabits = [
-  {
-    id: "h1",
-    name: "Uống nước",
-    status: "Haven't done in 5 days",
-    streak: 0,
-    description: "Drink water regularly to keep hydrated.",
-    history: [], // array of ISO strings
-  },
-  {
-    id: "h2",
-    name: "Meditate",
-    status: "4-day streak",
-    streak: 4,
-    description: "10 minutes meditation in the morning.",
-    history: [],
-  },
-  {
-    id: "h3",
-    name: "Jogging",
-    status: "Missed yesterday",
-    streak: 0,
-    description: "Run 3km every other day.",
-    history: [],
-  },
-];
-
-function loadHabits() {
-  try {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) return defaultHabits;
-    return JSON.parse(raw);
-  } catch (event) {
-    console.error("Failed load habits", event);
-    return defaultHabits;
-  }
-}
-
-function saveHabits(habits) {
-  localStorage.setItem(LS_KEY, JSON.stringify(habits));
-}
-
-// helper: returns 'YYYY-MM-DD'
-const ymd = (iso) => new Date(iso).toISOString().slice(0, 10);
-
 export default function HabitsPage() {
-  const [habits, setHabits] = useState(() => loadHabits());
+  const [habits, setHabits] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState(habits[0]?.id || null);
-  const [viewMode, setViewMode] = useState("cards"); // "cards" | "table"
+  const [selectedId, setSelectedId] = useState(null);
+  const [viewMode, setViewMode] = useState("cards");
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => saveHabits(habits), [habits]);
+  // Load habits from backend
+  const loadHabits = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await trackingApi.getAllHabits();
+      const backendHabits = response.habits || [];
+      const frontendHabits = mapHabitsToFrontend(backendHabits);
+      setHabits(frontendHabits);
+      
+      // Set first habit as selected if none selected
+      if (!selectedId && frontendHabits.length > 0) {
+        setSelectedId(frontendHabits[0].id);
+      }
+    } catch (err) {
+      console.error("Failed to load habits:", err);
+      setError("Failed to load habits. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // make sure selected exists
+    loadHabits();
+  }, []);
+
+  useEffect(() => {
+    // Make sure selected habit still exists
     if (!habits.find((h) => h.id === selectedId)) {
       setSelectedId(habits[0]?.id ?? null);
     }
@@ -84,49 +62,88 @@ export default function HabitsPage() {
       : habits;
   }, [habits, query]);
 
-  // actions
+  // Actions
   const selectHabit = (id) => setSelectedId(id);
 
-  const addHabit = (newHabit) => {
-    setHabits((prev) => {
-      const updated = [{ ...newHabit, id: `h_${Date.now()}`, history: [], streak: 0, status: "No activity yet" }, ...prev];
-      return updated;
-    });
-    setShowModal(false);
+  const addHabit = async (newHabit) => {
+    try {
+      const backendData = frontendToBackend(newHabit);
+      const response = await trackingApi.createHabit(backendData);
+      
+      // Reload all habits to get updated data
+      await loadHabits();
+      setShowModal(false);
+    } catch (err) {
+      console.error("Failed to create habit:", err);
+      alert("Failed to create habit. Please try again.");
+    }
   };
 
-  // mark as done for selected habit
-  const markDone = (habitId) => {
-    setHabits((prev) =>
-      prev.map((h) => {
-        if (h.id !== habitId) return h;
-        const today = ymd(nowISO());
-        const hasToday = h.history.some((d) => ymd(d) === today);
-        if (hasToday) return h; // already done
+  const markDone = async (habitId) => {
+    try {
+      await trackingApi.markHabitComplete(habitId);
+      // Reload habits to get updated streaks and logs
+      await loadHabits();
+    } catch (err) {
+      console.error("Failed to mark habit complete:", err);
+      alert("Failed to mark habit complete. Please try again.");
+    }
+  };
 
-        // compute streak: if yesterday exists then streak+1 else 1
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const ys = yesterday.toISOString().slice(0, 10);
-        const hadYesterday = h.history.some((d) => ymd(d) === ys);
+  const updateHabit = async (id, patch) => {
+    try {
+      const backendData = frontendToBackend(patch);
+      await trackingApi.updateHabit(id, backendData);
+      // Reload habits
+      await loadHabits();
+    } catch (err) {
+      console.error("Failed to update habit:", err);
+      alert("Failed to update habit. Please try again.");
+    }
+  };
 
-        const newStreak = hadYesterday ? (h.streak || 0) + 1 : 1;
-        const newHistory = [...h.history, nowISO()].sort();
+  const deleteHabit = async (id) => {
+    if (!confirm("Are you sure you want to delete this habit?")) return;
+    
+    try {
+      await trackingApi.deleteHabit(id);
+      // Remove from local state
+      setHabits((prev) => prev.filter((h) => h.id !== id));
+    } catch (err) {
+      console.error("Failed to delete habit:", err);
+      alert("Failed to delete habit. Please try again.");
+    }
+  };
 
-        const newStatus = newStreak > 0 ? `${newStreak}-day streak` : "Done today";
-
-        return { ...h, history: newHistory, streak: newStreak, status: newStatus };
-      })
+  if (loading) {
+    return (
+      <div className="hb-root hb-habits-page">
+        <div className="hb-header">
+          <div className="hb-brand">HaBiD</div>
+          <h2 className="hb-greeting">Habits</h2>
+        </div>
+        <div className="hb-container" style={{ padding: 40, textAlign: "center" }}>
+          Loading habits...
+        </div>
+      </div>
     );
-  };
+  }
 
-  const updateHabit = (id, patch) => {
-    setHabits((prev) => prev.map((h) => (h.id === id ? { ...h, ...patch } : h)));
-  };
-
-  const deleteHabit = (id) => {
-    setHabits((prev) => prev.filter((h) => h.id !== id));
-  };
+  if (error) {
+    return (
+      <div className="hb-root hb-habits-page">
+        <div className="hb-header">
+          <div className="hb-brand">HaBiD</div>
+          <h2 className="hb-greeting">Habits</h2>
+        </div>
+        <div className="hb-container" style={{ padding: 40, textAlign: "center", color: "red" }}>
+          {error}
+          <br />
+          <button onClick={loadHabits} style={{ marginTop: 20 }}>Retry</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="hb-root hb-habits-page">
@@ -148,7 +165,7 @@ export default function HabitsPage() {
                   <input
                     className="input"
                     value={query}
-                    onChange={(event) => setQuery(event.target.value)}
+                    onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search for habits..."
                     aria-label="Search habits"
                   />
