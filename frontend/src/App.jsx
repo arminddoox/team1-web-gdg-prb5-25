@@ -37,6 +37,7 @@ const RouteGuard = ({ type, children }) => {
 // ========== AppLayout ==========
 const AppLayout = ({ children }) => (
   <div className="app-layout">
+    <Sidebar/>
     <main>{children}</main>
   </div>
 );
@@ -88,7 +89,9 @@ export default function App() {
           path="/home"
           element={
             <RouteGuard type="protected">
-              <HomePage />
+              <AppLayout>
+                <HomePage />
+              </AppLayout>
             </RouteGuard>
           }
         />
