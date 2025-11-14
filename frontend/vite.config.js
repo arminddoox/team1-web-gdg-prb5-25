@@ -13,6 +13,11 @@ export default defineConfig(({ mode }) => {
       emptyOutDir: true,
     },
     server: {
+      allowedHosts: [
+        'ba2f5fde5e0e.ngrok-free.app', // host ngrok hiện tại
+        '*.ngrok-free.app',            // wildcard phòng hờ
+        '*.app.github.dev'             // GitHub Codespaces
+      ],
       proxy: {
         '/api': {
           target: env.VITE_API_URL || 'http://localhost:3000',
