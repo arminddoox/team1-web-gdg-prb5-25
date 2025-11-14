@@ -8,6 +8,7 @@ export default function RegisterPage() {
   const auth = useAuth();
 
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
   const [errMsg, setErrMsg] = useState("");
 
@@ -18,7 +19,7 @@ export default function RegisterPage() {
     setErrMsg("");
     try {
       // Use actual password if your backend needs it;
-      await auth.register({ email, password: "changeme" });
+      await auth.register({ email, password });
     } catch (error) {
       setErrMsg(error?.response?.data?.message || error.message || "Registration failed");
     } finally {
@@ -48,6 +49,19 @@ export default function RegisterPage() {
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
+              />
+            </label>
+
+            <label className="field">
+              <div className="label small"><span className="icon">🔒</span> Password</div>
+              <input
+                className="input"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                autoComplete="new-password"
+                placeholder="Enter your password"
               />
             </label>
 
