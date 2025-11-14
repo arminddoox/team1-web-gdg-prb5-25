@@ -4,7 +4,7 @@ import {
     createKnowledge,
     updateKnowledge,
     deleteKnowledge,
-} from '../controllers/knowledgeController.js';
+} from '../controllers/knowledge.controller.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();

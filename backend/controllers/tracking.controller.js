@@ -1,4 +1,4 @@
-import * as trackingService from '../services/trackingService.js';
+import * as trackingService from '../services/tracking.service.js';
 
 // Helper to get userId from auth middleware or fallback to testId
 const getUserId = (req) => req.user?._id || req.body.userId || 'testUserId';

@@ -6,7 +6,7 @@ import {
     deleteHabit,
     markHabitComplete,
     getTrackingSummary,
-} from '../controllers/trackingController.js';
+} from '../controllers/tracking.controller.js';
 import { authMiddleware } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();

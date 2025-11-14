@@ -1,4 +1,4 @@
-import * as knowledgeService from '../services/knowledgeService.js';
+import * as knowledgeService from '../services/knowledge.service.js';
 
 // Get knowledge entries
 export const getKnowledge = async (req, res) => {

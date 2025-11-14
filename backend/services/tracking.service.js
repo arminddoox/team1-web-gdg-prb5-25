@@ -1,4 +1,4 @@
-import Tracking from '../models/Tracking.js';
+import Tracking from '../models/tracking.model.js';
 
 // ============================
 // Tracking Module Services
