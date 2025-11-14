@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import configs from '../configs.js';
 
 /* ============================
-   Real Service Functions
+  Real Service Functions
    ============================ */
 
 /**
@@ -22,10 +22,20 @@ export const registerUser = async (email, password) => {
   const passwordHash = await bcrypt.hash(password, Number(configs.BCRYPT_SALT_ROUNDS));
   const user = await User.create({ email, passwordHash });
 
+  // Generate JWT token with id and email
+  const token = jwt.sign(
+    { 
+      id: user._id,
+      email: user.email  // ← ADD EMAIL HERE
+    },
+    configs.JWT_SECRET,
+    { expiresIn: configs.JWT_EXPIRES_IN }
+  );
+
   const userSafe = user.toObject();
   delete userSafe.passwordHash;
 
-  return userSafe;
+  return { user: userSafe, token };
 };
 
 /**
