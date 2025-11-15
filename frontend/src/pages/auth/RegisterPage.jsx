@@ -40,7 +40,9 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="auth-form" noValidate>
             <label className="field">
-              <div className="label small"><span className="icon">✉️</span> Email</div>
+              <div className="label small">
+                Email
+              </div>
               <input
                 className="input"
                 type="email"
@@ -49,19 +51,6 @@ export default function RegisterPage() {
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
-              />
-            </label>
-
-            <label className="field">
-              <div className="label small"><span className="icon">🔒</span> Password</div>
-              <input
-                className="input"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="new-password"
-                placeholder="Enter your password"
               />
             </label>
 
@@ -74,8 +63,12 @@ export default function RegisterPage() {
 
               <div className="divider" />
 
-              <button type="button" className="btn provider">Continue with Google</button>
-              <button type="button" className="btn provider">Continue with Phone Number</button>
+              <button type="button" className="btn provider">
+                Continue with Google
+              </button>
+              <button type="button" className="btn provider">
+                Continue with Phone Number
+              </button>
             </div>
           </form>
 

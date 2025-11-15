@@ -53,8 +53,8 @@ export default function Sidebar() {
 
       {/* Sidebar - slides in/out */}
       <aside
-        className={`fixed left-0 top-1/2 -translate-y-1/2 w-[250px] h-[750px] bg-[#2b2b2b] rounded-r-2xl shadow-2xl z-50 transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-[250px]"
+        className={`fixed left-0 top-1/2 -translate-y-1/2 w-[250px] h-[400px] bg-[#2b2b2b] rounded-r-2xl shadow-2xl z-50 transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-[205px]"
         }`}
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
@@ -70,15 +70,15 @@ export default function Sidebar() {
                 {user?.username || "Username"}
               </div>
             </div>
+            <button className="p-1.5 hover:bg-gray-700 rounded transition-colors">
+              <RotateCw size={18} className="text-gray-400" />
+            </button>
             <button 
               onClick={handleLogout}
               className="p-1.5 hover:bg-gray-700 rounded transition-colors"
               title="Logout"
             >
               <LogOut size={18} className="text-gray-400" />
-            </button>
-            <button className="p-1.5 hover:bg-gray-700 rounded transition-colors">
-              <RotateCw size={18} className="text-gray-400" />
             </button>
           </div>
 
