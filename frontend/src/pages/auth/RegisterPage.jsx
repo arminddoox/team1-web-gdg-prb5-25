@@ -18,7 +18,7 @@ export default function RegisterPage() {
     setBusy(true);
     setErrMsg("");
     try {
-      // Use actual password if your backend needs it;
+      // Pass both email and password to register API
       await auth.register({ email, password });
     } catch (error) {
       setErrMsg(error?.response?.data?.message || error.message || "Registration failed");
@@ -29,7 +29,6 @@ export default function RegisterPage() {
 
   return (
     <div className="auth-root centered-auth">
-      {/* top-left brand matches homepage */}
       <div className="auth-top-brand">
         <div className="hb-brand">HaBiD</div>
       </div>
@@ -40,9 +39,7 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit} className="auth-form" noValidate>
             <label className="field">
-              <div className="label small">
-                Email
-              </div>
+              <div className="label small">Email</div>
               <input
                 className="input"
                 type="email"
@@ -51,6 +48,19 @@ export default function RegisterPage() {
                 required
                 autoComplete="email"
                 placeholder="you@example.com"
+              />
+            </label>
+
+            <label className="field">
+              <div className="label small">Password</div>
+              <input
+                className="input"
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+                autoComplete="new-password"
+                placeholder="Enter your password"
               />
             </label>
 
@@ -63,12 +73,8 @@ export default function RegisterPage() {
 
               <div className="divider" />
 
-              <button type="button" className="btn provider">
-                Continue with Google
-              </button>
-              <button type="button" className="btn provider">
-                Continue with Phone Number
-              </button>
+              <button type="button" className="btn provider">Continue with Google</button>
+              <button type="button" className="btn provider">Continue with Phone Number</button>
             </div>
           </form>
 
