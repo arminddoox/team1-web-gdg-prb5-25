@@ -3,15 +3,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import HabitsList from "../../components/HabitsList";
 import HabitDetail from "../../components/HabitDetail";
 import NewHabitModal from "../../components/NewHabitModal.jsx";
+import EditHabitModal from "../../components/EditHabitModal.jsx";
 import trackingApi from "../../api/trackingApi";
 import { mapHabitsToFrontend, frontendToBackend } from "../../utils/habitMapper";
 import "../../styles/App.css";
-
-/**
- * HabitsPage - Now integrated with backend API
- * - Fetches habits from backend
- * - Provides search, selection, create, mark-as-done
- */
 
 export default function HabitsPage() {
   const [habits, setHabits] = useState([]);
@@ -19,8 +14,10 @@ export default function HabitsPage() {
   const [error, setError] = useState(null);
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState(null);
-  const [viewMode, setViewMode] = useState("cards");
   const [showModal, setShowModal] = useState(false);
+
+  // NEW: edit modal state
+  const [editingHabit, setEditingHabit] = useState(null);
 
   // Load habits from backend
   const loadHabits = async () => {
@@ -31,8 +28,7 @@ export default function HabitsPage() {
       const backendHabits = response.habits || [];
       const frontendHabits = mapHabitsToFrontend(backendHabits);
       setHabits(frontendHabits);
-      
-      // Set first habit as selected if none selected
+
       if (!selectedId && frontendHabits.length > 0) {
         setSelectedId(frontendHabits[0].id);
       }
@@ -44,12 +40,9 @@ export default function HabitsPage() {
     }
   };
 
-  useEffect(() => {
-    loadHabits();
-  }, []);
+  useEffect(() => { loadHabits(); }, []);
 
   useEffect(() => {
-    // Make sure selected habit still exists
     if (!habits.find((h) => h.id === selectedId)) {
       setSelectedId(habits[0]?.id ?? null);
     }
@@ -57,20 +50,17 @@ export default function HabitsPage() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return q
-      ? habits.filter((h) => h.name.toLowerCase().includes(q))
-      : habits;
+    return q ? habits.filter((h) => h.name.toLowerCase().includes(q)) : habits;
   }, [habits, query]);
 
-  // Actions
+  // ------------ ACTIONS ------------------------------------
+
   const selectHabit = (id) => setSelectedId(id);
 
   const addHabit = async (newHabit) => {
     try {
       const backendData = frontendToBackend(newHabit);
-      const response = await trackingApi.createHabit(backendData);
-      
-      // Reload all habits to get updated data
+      await trackingApi.createHabit(backendData);
       await loadHabits();
       setShowModal(false);
     } catch (err) {
@@ -82,7 +72,6 @@ export default function HabitsPage() {
   const markDone = async (habitId) => {
     try {
       await trackingApi.markHabitComplete(habitId);
-      // Reload habits to get updated streaks and logs
       await loadHabits();
     } catch (err) {
       console.error("Failed to mark habit complete:", err);
@@ -90,12 +79,27 @@ export default function HabitsPage() {
     }
   };
 
-  const updateHabit = async (id, patch) => {
+  // ✔ BACKEND update habit
+  const updateHabit = async (habitId, patch) => {
+    if (!habitId) {
+      console.error("No habitId provided for update!");
+      return;
+    }
+
     try {
+      // Convert frontend patch to backend format
       const backendData = frontendToBackend(patch);
-      await trackingApi.updateHabit(id, backendData);
-      // Reload habits
+
+      // Log for debugging
+
+      // Send PUT request
+      await trackingApi.updateHabit(habitId, backendData);
+
+      // Reload habits to reflect changes
       await loadHabits();
+
+      // Close edit modal
+      setEditingHabit(null); // close modal
     } catch (err) {
       console.error("Failed to update habit:", err);
       alert("Failed to update habit. Please try again.");
@@ -104,16 +108,16 @@ export default function HabitsPage() {
 
   const deleteHabit = async (id) => {
     if (!confirm("Are you sure you want to delete this habit?")) return;
-    
     try {
       await trackingApi.deleteHabit(id);
-      // Remove from local state
       setHabits((prev) => prev.filter((h) => h.id !== id));
     } catch (err) {
       console.error("Failed to delete habit:", err);
       alert("Failed to delete habit. Please try again.");
     }
   };
+
+  // ------------ UI STATES ------------------------------------
 
   if (loading) {
     return (
@@ -145,6 +149,8 @@ export default function HabitsPage() {
     );
   }
 
+  // ------------ RENDER UI ------------------------------------
+
   return (
     <div className="hb-root hb-habits-page">
       <div className="hb-header">
@@ -167,7 +173,6 @@ export default function HabitsPage() {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     placeholder="Search for habits..."
-                    aria-label="Search habits"
                   />
                 </div>
               </div>
@@ -177,9 +182,13 @@ export default function HabitsPage() {
               habits={filtered}
               selectedId={selectedId}
               onSelect={selectHabit}
-              viewMode={viewMode}
               onAdd={() => setShowModal(true)}
               onDelete={deleteHabit}
+              onUpdate={(id, patch) => updateHabit(id, patch)}
+              onEdit={(habit) => setEditingHabit({
+                ...habit,
+                id: habit.id || habit._id
+              })}
             />
           </div>
 
@@ -187,13 +196,21 @@ export default function HabitsPage() {
             <HabitDetail
               habit={habits.find((h) => h.id === selectedId) ?? null}
               onMarkDone={() => markDone(selectedId)}
-              onUpdate={(patch) => updateHabit(selectedId, patch)}
+              onUpdate={(patch) => updateHabit(selectedId, patch)} // ✔ “Edit inside detail panel”
             />
           </div>
         </div>
       </div>
 
       <NewHabitModal visible={showModal} onClose={() => setShowModal(false)} onCreate={addHabit} />
+
+      {editingHabit && (
+        <EditHabitModal
+          habit={editingHabit}
+          onClose={() => setEditingHabit(null)}
+          onUpdate={updateHabit} // ✔ SAVE UPDATE
+        />
+      )}
     </div>
   );
 }

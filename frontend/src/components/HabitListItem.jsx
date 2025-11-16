@@ -1,16 +1,18 @@
 // frontend/src/pages/tracking/components/HabitListItem.jsx
-import React from "react";
+import React, { useState } from "react";
+import EditHabitModal from "./EditHabitModal.jsx"; // We'll create this modal
+import PropTypes from "prop-types";
 
 /**
- * HabitListItem - single row table-like item with many icons and actions
- * props:
+ * HabitListItem - single row table-like item with icons and actions
+ * Props:
  *  - habit (object)
  *  - selected (bool)
  *  - onSelect() - called when row clicked
- *  - viewMode (unused here but kept)
+ *  - viewMode (optional)
  *  - onDelete()
  *  - onQuickMark() optional quick mark function
- *  - onEdit() optional edit function
+ *  - onUpdate() optional update function
  */
 
 const StatusDot = ({ color = "gray" }) => {
@@ -48,8 +50,6 @@ const Icon = {
       <circle cx="19" cy="12" r="1.5" fill="currentColor" />
     </svg>
   ),
-
-  
   Check: ({ size = 16 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
       <path d="M20 6L9 17l-5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -69,65 +69,98 @@ export default function HabitListItem({
   habit,
   selected,
   onSelect,
-  viewMode,
   onDelete,
   onQuickMark,
-  onEdit,
+  onUpdate,
 }) {
+  const [editModalVisible, setEditModalVisible] = useState(false);
   const color = statusColor(habit);
   const todayDone = habit.history?.some((d) => d.slice(0, 10) === new Date().toISOString().slice(0, 10));
 
+  const handleEdit = () => setEditModalVisible(true);
+
+  const handleUpdate = (patch) => {
+    console.log("HabitListItem: handleUpdate called", habit.id, patch);
+    onUpdate?.(habit.id, patch);
+    setEditModalVisible(false);
+  };
+
+  const handleMore = () => {
+    alert(`More options for "${habit.name}" (can implement archive, copy, etc.)`);
+  };
+
   return (
-    <div
-      className={`habit-row ${selected ? "selected" : ""}`}
-      onClick={onSelect}
-      role="row"
-      tabIndex={0}
-      onKeyDown={(event) => { if (event.key === "Enter") onSelect?.(); }}
-    >
-      {/* Checkbox / quick mark */}
-      <div className="start-row">
-      <div className="col col-checkbox">
-        <button
-          className={`icon-btn ${todayDone ? "active" : ""}`}
-          onClick={(event) => { event.stopPropagation(); onQuickMark?.(habit.id); }}
-          title={todayDone ? "Already done today" : "Mark done today"}
-          aria-pressed={todayDone}
-        >
-          <Icon.Check />
-        </button>
-      </div>
+    <>
+      <div
+        className={`habit-row ${selected ? "selected" : ""}`}
+        onClick={onSelect}
+        role="row"
+        tabIndex={0}
+        onKeyDown={(event) => { if (event.key === "Enter") onSelect?.(); }}
+      >
+        <div className="start-row">
+          <div className="col col-checkbox">
+            <button
+              className={`icon-btn ${todayDone ? "active" : ""}`}
+              onClick={(e) => { e.stopPropagation(); onQuickMark?.(habit.id); }}
+              title={todayDone ? "Already done today" : "Mark done today"}
+              aria-pressed={todayDone}
+            >
+              <Icon.Check />
+            </button>
+          </div>
 
-      {/* Emoji + name */}
-      <div className="col col-name">
-        
-          <div className="h-name">{habit.name}</div>
-        
-      </div>
+          <div className="col col-name">
+            <div className="h-name">{habit.name}</div>
+          </div>
 
-      {/* Status */}
-      <div className="col col-status">
-        <div className="status-inline">
-          <StatusDot color={color} /> <span className="status-text">{habit.status}</span>
+          <div className="col col-status">
+            <div className="status-inline">
+              <StatusDot color={color} /> <span className="status-text">{habit.status}</span>
+            </div>
+          </div>
+
+          <div className="col col-last">
+            {habit.history?.length
+              ? new Date(habit.history[habit.history.length - 1]).toLocaleDateString()
+              : "-"}
+          </div>
+        </div>
+
+        <div className="col col-actions" onClick={(e) => e.stopPropagation()}>
+          <button className="icon-btn no-border" title="Open calendar">
+            <Icon.Calendar />
+          </button>
+
+          <button className="icon-btn no-border" title="Edit" onClick={handleEdit}>
+            <Icon.Edit />
+          </button>
+
+          <button className="icon-btn no-border" title="More" onClick={handleMore}>
+            <Icon.More />
+          </button>
+
+          <button className="small ghost" onClick={() => onDelete?.(habit.id)}>Delete</button>
         </div>
       </div>
 
-      {/* Last activity */}
-      <div className="col col-last">{habit.history?.length ? new Date(habit.history[habit.history.length - 1]).toLocaleDateString() : "-"}</div>
-        </div>
-      {/* Actions */}
-      <div className="col col-actions" onClick={(event) => event.stopPropagation()}>
-        <button className="icon-btn no-border" title="Open calendar">
-          <Icon.Calendar />
-        </button>
-        <button className="icon-btn no-border" title="Edit" onClick={() => onEdit?.(habit.id)}>
-          <Icon.Edit />
-        </button>
-        <button className="icon-btn no-border" title="More">
-          <Icon.More />
-        </button>
-        <button className="small ghost" onClick={() => onDelete?.(habit.id)}>Delete</button>
-      </div>
-    </div>
+      {editModalVisible && (
+        <EditHabitModal
+          habit={habit}
+          visible={editModalVisible}
+          onClose={() => setEditModalVisible(false)}
+          onUpdate={handleUpdate}
+        />
+      )}
+    </>
   );
 }
+
+HabitListItem.propTypes = {
+  habit: PropTypes.object.isRequired,
+  selected: PropTypes.bool,
+  onSelect: PropTypes.func,
+  onDelete: PropTypes.func,
+  onQuickMark: PropTypes.func,
+  onUpdate: PropTypes.func,
+};

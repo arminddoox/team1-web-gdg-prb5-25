@@ -22,8 +22,8 @@ export default function NewHabitModal({ visible, onClose, onCreate }) {
   };
 
   return (
-    <div className="modal-backdrop" role="dialog" aria-modal>
-      <div className="modal">
+    <div className="modal-overlay" role="dialog" aria-modal>
+      <div className="modal-content">
         <h3 className="padding-bottom">Create habit</h3>
         <form onSubmit={submit}>
           <label className="field">
