@@ -66,12 +66,27 @@ export default function EditHabitModal({ habit, onClose, onUpdate }) {
           </select>
         </label>
 
-        <div className="modal-actions">
-          <button onClick={onClose} disabled={saving}>Cancel</button>
-          <button onClick={handleSave} disabled={saving}>
-            {saving ? "Saving..." : "Save"}
-          </button>
-        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault(); // prevent page reload
+            handleSave();
+          }}
+        >
+          <div className="modal-actions">
+            <button type="button" onClick={onClose} disabled={saving}>
+              Cancel
+            </button>
+            <button 
+              type="button" 
+              onClick={() => {
+                handleSave();
+              }}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : "Save"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

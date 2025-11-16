@@ -47,16 +47,15 @@ export const updateHabit = async (userId, habitId, updates) => {
 
 // Delete a habit
 export const deleteHabit = async (userId, habitId) => {
-  try {
-    const tracking = await Tracking.findOne({ userId });
-    const habit = tracking.habits.id(habitId);
-    if (!habit) throw new Error('Habit not found');
-    habit.remove();
-    await tracking.save();
-    return { message: 'Habit deleted' };
-  } catch (error) {
-    return { message: "deleteHabit - habit deleted (placeholder)", habitId };
-  }
+  const tracking = await Tracking.findOne({ userId });
+  if (!tracking) throw new Error("Tracking not found");
+
+  // Pull removes from array by _id
+  tracking.habits.pull({ _id: habitId });
+
+  await tracking.save();
+
+  return { message: "Habit deleted", habitId };
 };
 
 // Mark habit complete for today

@@ -7,7 +7,7 @@ import HabitListItem from "./HabitListItem";
  * props: habits, selectedId, onSelect, viewMode, onAdd, onDelete
  */
 
-export default function HabitsList({ habits = [], selectedId, onSelect, viewMode = "cards", onAdd, onDelete }) {
+export default function HabitsList({ habits = [], selectedId, onSelect, viewMode = "cards", onAdd, onDelete, onUpdate }) {
   return (
     <div className="hb-habits-list">
       <div className="hb-habits-actions">
@@ -24,6 +24,7 @@ export default function HabitsList({ habits = [], selectedId, onSelect, viewMode
             onSelect={() => onSelect(h.id)}
             viewMode={viewMode}
             onDelete={() => onDelete(h.id)}
+            onUpdate={onUpdate}
           />
         ))}
       </div>

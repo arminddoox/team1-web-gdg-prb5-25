@@ -79,8 +79,9 @@ export default function HabitListItem({
 
   const handleEdit = () => setEditModalVisible(true);
 
-  const handleUpdate = (updates) => {
-    onUpdate?.(habit.id, updates);
+  const handleUpdate = (patch) => {
+    console.log("HabitListItem: handleUpdate called", habit.id, patch);
+    onUpdate?.(habit.id, patch);
     setEditModalVisible(false);
   };
 

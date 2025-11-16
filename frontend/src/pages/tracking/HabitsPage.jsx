@@ -80,11 +80,25 @@ export default function HabitsPage() {
   };
 
   // ✔ BACKEND update habit
-  const updateHabit = async (id, patch) => {
+  const updateHabit = async (habitId, patch) => {
+    if (!habitId) {
+      console.error("No habitId provided for update!");
+      return;
+    }
+
     try {
+      // Convert frontend patch to backend format
       const backendData = frontendToBackend(patch);
-      await trackingApi.updateHabit(id, backendData);
+
+      // Log for debugging
+
+      // Send PUT request
+      await trackingApi.updateHabit(habitId, backendData);
+
+      // Reload habits to reflect changes
       await loadHabits();
+
+      // Close edit modal
       setEditingHabit(null); // close modal
     } catch (err) {
       console.error("Failed to update habit:", err);
@@ -170,7 +184,11 @@ export default function HabitsPage() {
               onSelect={selectHabit}
               onAdd={() => setShowModal(true)}
               onDelete={deleteHabit}
-              onEdit={(habit) => setEditingHabit(habit)} // ✔ OPEN EDIT MODAL
+              onUpdate={(id, patch) => updateHabit(id, patch)}
+              onEdit={(habit) => setEditingHabit({
+                ...habit,
+                id: habit.id || habit._id
+              })}
             />
           </div>
 
@@ -190,7 +208,7 @@ export default function HabitsPage() {
         <EditHabitModal
           habit={editingHabit}
           onClose={() => setEditingHabit(null)}
-          onUpdate={(patch) => updateHabit(editingHabit.id, patch)} // ✔ SAVE UPDATE
+          onUpdate={updateHabit} // ✔ SAVE UPDATE
         />
       )}
     </div>
