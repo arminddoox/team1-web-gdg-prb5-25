@@ -34,13 +34,13 @@ export const deleteHabit = async (req, res) => {
 // Mark habit complete today
 export const markHabitComplete = async (req, res) => {
   const userId = getUserId(req);
-  const habit = await trackingService.trackHabitCompletion(userId, req.params.habitId);
+  const habit = await trackingService.markHabitComplete(userId, req.params.habitId);
   res.json({ status: 'success', habit });
 };
 
 // Get tracking summary (streaks, completion rate)
 export const getTrackingSummary = async (req, res) => {
   const userId = getUserId(req);
-  const summary = await trackingService.getTrackingSummaryService(userId);
+  const summary = await trackingService.getTrackingSummary(userId);
   res.json({ status: 'success', summary });
 };
