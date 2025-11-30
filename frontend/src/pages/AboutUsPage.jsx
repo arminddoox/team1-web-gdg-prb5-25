@@ -1,9 +1,9 @@
 export default function AboutUsPage() {
   return (
-    <div>
-      <h1>Welcome to the AboutUsPage</h1>
+    <main className="about-page">
+      <h1>About Us</h1>
       <hr />
-      <i>(placeholder)</i>
-    </div>
+      <p><i>(placeholder content)</i></p>
+    </main>
   );
 }
