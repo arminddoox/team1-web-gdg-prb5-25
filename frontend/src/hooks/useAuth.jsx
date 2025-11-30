@@ -1,5 +1,5 @@
 // frontend/src/hooks/useAuth.jsx
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { authApi } from "../api/authApi";
 import { getToken, clearToken } from "../api/axios";
 
