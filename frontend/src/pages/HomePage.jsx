@@ -172,7 +172,7 @@ export default function HomePage() {
   // Get today's incomplete habits for "To do" section
   const todayYmd = new Date().toISOString().slice(0, 10);
   const todoHabits = habits.filter(h => {
-    const hasToday = h.history?.some(d => d.slice(0, 10) === todayYmd);
+    const hasToday = h.history?.some(d => new Date(d).toISOString().slice(0,10) === todayYmd);
     return !hasToday; // Show habits not done today
   }).slice(0, 6); // Limit to 6
 
