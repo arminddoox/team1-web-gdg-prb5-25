@@ -1,4 +1,4 @@
-import { safeNavigate, api, setToken, clearToken } from "./axios";
+import { safeNavigate, api, getToken, setToken, clearToken } from "./axios";
 
 /**
  * Giúp decode payload từ JWT (không cần dependency).
@@ -58,7 +58,7 @@ export const authApi = {
     try {
       // Try infer userId from token if not provided
       if (!userId) {
-        const token = localStorage.getItem("token");
+        const token = getToken();
         if (token) userId = getUserIdFromToken(token);
       }
 

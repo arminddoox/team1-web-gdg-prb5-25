@@ -64,8 +64,15 @@ export default function App() {
         />
 
         {/* Public / informational */}
-        <Route path="/about" element={<AboutUsPage />} />
-
+        <Route
+          path="/about"
+          element={
+            <RouteGuard type="public">
+              <AboutUsPage />
+            </RouteGuard>
+          }
+        />
+        
         {/* Public Routes (auth pages) */}
         <Route
           path="/login"
